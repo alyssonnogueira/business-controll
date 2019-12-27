@@ -35,12 +35,17 @@ import {
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
+import { LancamentoModalComponent } from './lancamento-modal/lancamento-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LancamentosComponent,
-    MenuComponent
+    MenuComponent,
+    LancamentoModalComponent,
+  ],
+  entryComponents: [
+    LancamentoModalComponent,
   ],
   imports: [
     BrowserModule,
