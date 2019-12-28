@@ -38,7 +38,7 @@ export class LancamentosComponent implements OnInit {
  
   adicionarLancamento(){
     const dialogRef = this.dialog.open(LancamentoModalComponent, {
-      width: '250px',
+      width: '450px',
       data: {}
     });
 

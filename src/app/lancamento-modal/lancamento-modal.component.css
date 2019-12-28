@@ -1,0 +1,24 @@
+.classic{
+    font-family:  Roboto,"Helvetica Neue",sans-serif;
+    text-align: center;
+   
+}
+.radios{
+    margin-top: 15px;
+    border: 1px solid #999999;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.bot{
+    margin-top: 15px;
+    /* border: 1px solid #999999; */
+    padding: 10px;
+    border-radius: 10px;
+}
+.bot button{
+    margin-right: 13px;
+}
+.rad mat-radio-button {
+    margin-right: 8px ;
+}

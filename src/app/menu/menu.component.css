@@ -1,4 +1,4 @@
-.container {
+.containerr {
   position: absolute;
   top: 0;
   bottom: 0;
@@ -8,4 +8,14 @@
 
 .spacer {
   flex: 1 1 auto;
+}
+
+.imagem{
+  background-image: url(img/imagemLogo.png);
+  background-size: 100%;
+  background-repeat: no-repeat;
+  height: 70px;
+  width: 100px;
+  margin-left: 38px;
+  margin-top: -8%;
 }

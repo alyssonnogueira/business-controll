@@ -1,0 +1,68 @@
+
+<div class="classic">
+    <h1>Lançamento</h1>
+    <form class="example-container" [formGroup]="lacamentoFormGroup">
+     <div class="row"> 
+        <div class="col-lg-6 col-md-12">
+          <mat-form-field>
+            <input matInput [matDatepicker]="picker1" placeholder="Angular forms" [formControl]="date">
+            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+            <mat-datepicker #picker1></mat-datepicker>
+          </mat-form-field>
+        </div>
+        <div class="col-lg-6 col-md-12">
+             <mat-form-field>
+            <input matInput placeholder="Valor" type="number" class="example-right-align">
+            <span matPrefix>R$&nbsp;</span>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <mat-form-field>
+        <textarea matInput placeholder="Descrção"></textarea>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-select placeholder="Categoria">
+          <mat-option value="1">Presente</mat-option>
+          <mat-option value="2">Nao Presente</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+  <mat-form-field>
+    <mat-select placeholder="Responsavel">
+      <mat-option value="1">Alysson</mat-option>
+      <mat-option value="2">Giordana</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <div class="radios">
+              <label>Pagamento: </label>
+    <mat-radio-group formControlName="pagamento">
+        <div class="rad">      
+            <mat-radio-button value="1" checked>Debito</mat-radio-button>
+            <mat-radio-button value="2">Crédito</mat-radio-button>
+        </div>
+
+    </mat-radio-group>
+  </div>
+
+
+
+<div class="radios">
+    <label>Tipo: </label>
+    <div class="rad" >      
+            <mat-radio-group formControlName="tipo">
+            <mat-radio-button value="1" checked>Despesa</mat-radio-button>
+            <mat-radio-button value="2">Receita</mat-radio-button>
+            <mat-radio-button value="3">Investimento</mat-radio-button>
+            </mat-radio-group>
+    </div>
+</div>
+
+<div class="bot">
+    <button mat-stroked-button >Cancelar</button>
+    <button mat-stroked-button >Adicionar</button>
+</div>
+</form>
+</div>
