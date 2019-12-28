@@ -34,16 +34,19 @@ export class LancamentosComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
-  } 
- 
+  }
+
   adicionarLancamento(){
     const dialogRef = this.dialog.open(LancamentoModalComponent, {
       width: '450px',
-      data: {}
+      data: null
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
-      });
+      if (result != null) {
+        this.lancamentoService.salvarLancamento(result);
+        this.dataSource.data = this.lancamentoService.obterTodosLancamentos();
+      }
+    });
   }
 }

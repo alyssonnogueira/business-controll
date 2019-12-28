@@ -1,20 +1,46 @@
 import { Injectable } from '@angular/core';
 import {Lancamento} from '../model/lancamento';
+import { Categoria } from '../model/categoria';
+import { Conta } from '../model/conta';
+import { TipoPagamento } from '../enum/tipo-pagamento.enum';
+import { Responsavel } from '../model/responsavel';
+import { TipoLancamento } from '../enum/tipo-lancamento.enum';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LancamentoService {
 
-  constructor() { }
+  lancamentos = [];
+
+  constructor() {
+    this.lancamentos = this.mockLancamentos();
+  }
 
   obterTodosLancamentos(): Lancamento[] {
-    const lancamento1 = new Lancamento(1, new Date(), 1.5, 'nova descricao', 1,
-      1,  1, 1);
-    const lancamento2 = new Lancamento(2,  new Date(), 50.2, 'outra desc',
-      3, 4, 5, 6 );
-    const lancamento3 = new Lancamento(3, new Date(), 24.2, 'ewqewqeqw', 31,
-      2, 2, 31);
+    return this.lancamentos;
+  }
+
+  salvarLancamento(lancamento: Lancamento) {
+    if (lancamento.id != null) {
+      const lancamentoId = this.lancamentos.findIndex(l => l.id === lancamento.id);
+      this.lancamentos[lancamentoId] = lancamento;
+    } else {
+      lancamento.id = this.lancamentos.length;
+      this.lancamentos.push(lancamento);
+    }
+  }
+
+  mockLancamentos(): Lancamento[] {
+    const categoriaMock = new Categoria(1, 'Mercado');
+    const responsavelMock = new Responsavel(1, 'Alysson');
+    const contaMock = new Conta(1, 'B.B Débito', TipoPagamento.DEBITO);
+    const lancamento1 = new Lancamento(1, new Date(), 1.5, 'nova descricao',
+    categoriaMock,  responsavelMock, TipoLancamento.DESPESA, contaMock);
+    const lancamento2 = new Lancamento(1, new Date(), 1.5, 'nova descricao',
+    categoriaMock,  responsavelMock, TipoLancamento.DESPESA, contaMock);
+    const lancamento3 = new Lancamento(1, new Date(), 1.5, 'nova descricao',
+    categoriaMock,  responsavelMock, TipoLancamento.DESPESA, contaMock);
     return [lancamento1, lancamento2, lancamento3];
   }
 
