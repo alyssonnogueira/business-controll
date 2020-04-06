@@ -1,11 +1,11 @@
-import { Transferencia } from './../model/transferencia';
-import { TipoTransacaoEnum } from './../model/tipoTransacao.enum';
-import { Receita } from './../model/receita';
-import { Despesa } from './../model/despesa';
-import { TransacaoService } from '../services/transacao.service';
+import { Transferencia } from '../../model/transferencia';
+import { TipoTransacaoEnum } from '../../model/tipoTransacao.enum';
+import { Receita } from '../../model/receita';
+import { Despesa } from '../../model/despesa';
+import { TransacaoService } from '../../services/transacao.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
-import {Transacao} from '../model/transacao';
+import {Transacao} from '../../model/transacao';
 import { TransacaoModalComponent } from '../transacao-modal/transacao-modal.component';
 import {MatDialog } from '@angular/material/dialog';
 

@@ -7,8 +7,16 @@
     <mat-nav-list>
       <mat-list-item>
         <mat-icon mat-list-icon>date_range</mat-icon>
-        <a matLine href="lancamentos">Lançamentos</a>
+        <a matLine [routerLink]="['/transacoes']">Transações</a>
       </mat-list-item>
+      <mat-list-item>
+        <mat-icon mat-list-icon>account_balance_wallet</mat-icon>
+        <a matLine [routerLink]="['/contas']">Contas</a>
+      </mat-list-item>
+      <mat-list-item>
+          <mat-icon mat-list-icon>people</mat-icon>
+          <a matLine [routerLink]="['/responsaveis']">Responsáveis</a>
+        </mat-list-item>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -30,7 +38,7 @@
 </mat-sidenav-container>
 
 <mat-menu #userMenu="matMenu">
-  <a mat-menu-item href="/profile">Perfil</a>
-  <a mat-menu-item href="/help">Ajuda</a>
+  <a mat-menu-item [routerLink]="profile">Perfil</a>
+  <a mat-menu-item [routerLink]="help">Ajuda</a>
   <a mat-menu-item (click)="logout()">Sair</a>
 </mat-menu>

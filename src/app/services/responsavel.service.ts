@@ -17,7 +17,12 @@ export class ResponsavelService {
     return this.responsaveis.filter(responsavel => responsavel.id === id)[0];
   }
 
-  obterTodosResponsaveis() {
+  obterTodosResponsaveis(): Responsavel[] {
     return this.responsaveis;
+  }
+
+  salvarResponsavel(responsavel: Responsavel) {
+    responsavel.id = this.responsaveis.length + 1;
+    this.responsaveis.push(responsavel);
   }
 }

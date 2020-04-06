@@ -3,9 +3,9 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TransacaoComponent } from './transacao/transacao.component';
+import { TransacaoComponent } from './component/transacao/transacao.component';
 import {AppRouterModule} from './router/app-router.module';
-import { MenuComponent } from './menu/menu.component';
+import { MenuComponent } from './component/menu/menu.component';
 import { FormsModule } from '@angular/forms';
 
 import {
@@ -37,7 +37,11 @@ import {
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
-import { TransacaoModalComponent } from './transacao-modal/transacao-modal.component';
+import { TransacaoModalComponent } from './component/transacao-modal/transacao-modal.component';
+import { ContaComponent } from './component/conta/conta.component';
+import { ContaModalComponent } from './component/conta-modal/conta-modal.component';
+import { ResponsavelComponent } from './component/responsavel/responsavel.component';
+import { ResponsavelModalComponent } from './component/responsavel-modal/responsavel-modal.component';
 
 @NgModule({
   declarations: [
@@ -45,9 +49,17 @@ import { TransacaoModalComponent } from './transacao-modal/transacao-modal.compo
     TransacaoComponent,
     MenuComponent,
     TransacaoModalComponent,
+    ContaModalComponent,
+    ResponsavelComponent,
+    ContaComponent,
+    ContaModalComponent,
+    ResponsavelComponent,
+    ResponsavelModalComponent,
   ],
   entryComponents: [
     TransacaoModalComponent,
+    ContaModalComponent,
+    ResponsavelModalComponent
   ],
   imports: [
     BrowserModule,

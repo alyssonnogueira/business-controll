@@ -44,6 +44,7 @@ export class TransacaoService {
   salvarTransacao(transacao: Transacao): void {
     transacao.id = this.transacoes.length + 1;
     this.transacoes.push(transacao);
+    this.contaService.alterarSaldoConta(transacao);
   }
 
 }
