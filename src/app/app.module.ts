@@ -3,9 +3,11 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { LancamentosComponent } from './lancamentos/lancamentos.component';
+import { TransacaoComponent } from './transacao/transacao.component';
 import {AppRouterModule} from './router/app-router.module';
 import { MenuComponent } from './menu/menu.component';
+import { FormsModule } from '@angular/forms';
+
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -35,22 +37,23 @@ import {
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
-import { LancamentoModalComponent } from './lancamento-modal/lancamento-modal.component';
+import { TransacaoModalComponent } from './transacao-modal/transacao-modal.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LancamentosComponent,
+    TransacaoComponent,
     MenuComponent,
-    LancamentoModalComponent,
+    TransacaoModalComponent,
   ],
   entryComponents: [
-    LancamentoModalComponent,
+    TransacaoModalComponent,
   ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
     AppRouterModule,
+    FormsModule,
     // Material Imports
     MatNativeDateModule,
     ReactiveFormsModule,

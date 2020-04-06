@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { LancamentoService } from './lancamento.service';
+import { ResponsavelService } from './responsavel.service';
 
-describe('LancementoService', () => {
+describe('ResponsavelService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: LancamentoService = TestBed.get(LancamentoService);
+    const service: ResponsavelService = TestBed.get(ResponsavelService);
     expect(service).toBeTruthy();
   });
 });

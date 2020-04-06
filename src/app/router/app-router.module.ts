@@ -1,12 +1,12 @@
+import { TransacaoComponent } from '../transacao/transacao.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterModule} from '@angular/router';
-import {LancamentosComponent} from '../lancamentos/lancamentos.component';
 import {MenuComponent} from '../menu/menu.component';
 
 const routes = [
-  { path: '', component: LancamentosComponent },
-  { path: 'lancamentos', component: LancamentosComponent }
+  { path: '', component: TransacaoComponent },
+  { path: 'transacao', component: TransacaoComponent }
 ];
 
 @NgModule({
