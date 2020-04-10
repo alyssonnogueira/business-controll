@@ -11,6 +11,7 @@ import { Responsavel } from '../../model/responsavel';
 import { Conta } from '../../model/conta';
 import { CategoriaDespesaEnum } from '../../model/categoriaDespesa.enum';
 import { TipoRendaEnum } from '../../model/tipoRenda.enum';
+import {MatSnackBar} from '@angular/material';
 
 
 @Component({
@@ -25,27 +26,29 @@ export class TransacaoModalComponent implements OnInit {
   keys = Object.keys;
   categoriaEnum = CategoriaDespesaEnum;
   tipoRendaEnum = TipoRendaEnum;
+  private mensagemValidacao = 'POR FAVOR PREENCHA TODOS OS CAMPOS';
 
   constructor(
     public dialogRef: MatDialogRef<TransacaoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Transacao,
     private responsavelService: ResponsavelService,
-    private contaService: ContaService) { }
+    private contaService: ContaService,
+    private snackBar: MatSnackBar) { }
 
   onCancel(): void {
     this.dialogRef.close();
   }
 
   onSave(): void {
-    if (this.isDespesa) {
+    if (this.isDespesa && this.validarDespesa(this.data as Despesa)) {
       this.dialogRef.close(Despesa.jsonToDespesa(this.data));
     }
 
-    if (this.isReceita) {
+    if (this.isReceita && this.validarReceita(this.data as Receita)) {
       this.dialogRef.close(Receita.jsonToDespesa(this.data));
     }
 
-    if (this.isTranferencia) {
+    if (this.isTranferencia && this.validarTransferencia(this.data as Transferencia)) {
       this.dialogRef.close(Transferencia.jsonToDespesa(this.data));
     }
   }
@@ -71,5 +74,38 @@ export class TransacaoModalComponent implements OnInit {
 
   get isTranferencia(): boolean {
     return TipoTransacaoEnum[this.tipoTransacao] === TipoTransacaoEnum.TRANSFERENCIA;
+  }
+
+  validarDespesa(transacao: Despesa): boolean {
+    if (this.validarTransacao(transacao) || !transacao.categoria) {
+      this.mostrarMensagemDeErro();
+      return false;
+    }
+    return true;
+  }
+
+  validarTransferencia(transacao: Transferencia) {
+    if (this.validarTransacao(transacao) || !transacao.contaDestino) {
+      this.mostrarMensagemDeErro();
+      return false;
+    }
+    return true;
+  }
+  validarReceita(transacao: Receita) {
+    if (this.validarTransacao(transacao) || !transacao.tipoRenda) {
+      this.mostrarMensagemDeErro();
+      return false;
+    }
+    return true;
+  }
+
+  validarTransacao(transacao: Transacao): boolean {
+    return !transacao.conta || !transacao.data || !transacao.responsavel || !transacao.valor;
+  }
+
+  mostrarMensagemDeErro(): void {
+    this.snackBar.open(this.mensagemValidacao, 'Ok', {
+      duration: 3000,
+    });
   }
 }

@@ -5,17 +5,17 @@
     </div>
     <mat-divider></mat-divider>
     <mat-nav-list>
-      <mat-list-item>
+      <mat-list-item routerLink='transacoes'>
         <mat-icon mat-list-icon>date_range</mat-icon>
-        <a matLine [routerLink]="['/transacoes']">Transações</a>
+        <a matLine id="transacoes_menu">Transações</a>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item routerLink='contas'>
         <mat-icon mat-list-icon>account_balance_wallet</mat-icon>
-        <a matLine [routerLink]="['/contas']">Contas</a>
+        <a matLine id="contas_menu">Contas</a>
       </mat-list-item>
-      <mat-list-item>
+      <mat-list-item routerLink='responsaveis'>
           <mat-icon mat-list-icon>people</mat-icon>
-          <a matLine [routerLink]="['/responsaveis']">Responsáveis</a>
+          <a matLine id="responsaveis_menu">Responsáveis</a>
         </mat-list-item>
     </mat-nav-list>
   </mat-sidenav>
@@ -38,7 +38,7 @@
 </mat-sidenav-container>
 
 <mat-menu #userMenu="matMenu">
-  <a mat-menu-item [routerLink]="profile">Perfil</a>
-  <a mat-menu-item [routerLink]="help">Ajuda</a>
+  <a mat-menu-item routerLink='profile'>Perfil</a>
+  <a mat-menu-item routerLink='help'>Ajuda</a>
   <a mat-menu-item (click)="logout()">Sair</a>
 </mat-menu>
