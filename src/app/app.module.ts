@@ -42,6 +42,8 @@ import { ContaComponent } from './component/conta/conta.component';
 import { ContaModalComponent } from './component/conta-modal/conta-modal.component';
 import { ResponsavelComponent } from './component/responsavel/responsavel.component';
 import { ResponsavelModalComponent } from './component/responsavel-modal/responsavel-modal.component';
+import {NgxIndexedDBModule} from 'ngx-indexed-db';
+import {IndexedDBConfigService} from './services/indexed-dbconfig.service';
 
 @NgModule({
   declarations: [
@@ -103,6 +105,8 @@ import { ResponsavelModalComponent } from './component/responsavel-modal/respons
     MatTabsModule,
     MatToolbarModule,
     MatTooltipModule,
+    // IndexedDB
+    NgxIndexedDBModule.forRoot(new IndexedDBConfigService())
   ],
   providers: [],
   bootstrap: [AppComponent]

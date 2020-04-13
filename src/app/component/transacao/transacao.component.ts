@@ -16,7 +16,7 @@ import {MatDialog } from '@angular/material/dialog';
 })
 export class TransacaoComponent implements OnInit {
 
-  displayedColumns: string[] = ['id', 'data', 'valor', 'descricao', 'responsavel', 'tipoPagamento', 'conta', 'tipoTransacao'];
+  displayedColumns: string[] = ['id', 'data', 'valor', 'descricao', 'responsavel', 'tipoPagamento', 'conta', 'delete'];
   dataSource: MatTableDataSource<Transacao>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -49,6 +49,24 @@ export class TransacaoComponent implements OnInit {
       this.transacaoService.salvarTransacao(result);
       this.dataSource.data = this.transacaoService.obterTodasTransacoes();
     });
+  }
+
+  editarTransacao(transacao: Transacao) {
+    const dialogRef = this.dialog.open(TransacaoModalComponent, {
+      width: '800px',
+      data: transacao // Object.assign({}, transacao)
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      transacao = result;
+      // this.transacaoService.salvarTransacao(result);
+      // this.dataSource.data = this.transacaoService.obterTodasTransacoes();
+    });
+  }
+
+  excluirTransacao(transacao: Transacao) {
+    this.transacaoService.desfazerTransacao(transacao);
+    this.dataSource.data = this.transacaoService.obterTodasTransacoes();
   }
 
   obterTipoTransacao(transacao): string {

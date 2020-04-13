@@ -51,4 +51,17 @@ export class ContaService {
       contaDestino.saldo += transacao.valor;
     }
   }
+
+  desfazerAlteracao(transacao: Transacao) {
+    const conta = this.obterContaPorId(transacao.conta.id);
+    if (transacao instanceof Despesa) {
+      conta.saldo += transacao.valor;
+    } else if (transacao instanceof Receita) {
+      conta.saldo -= transacao.valor;
+    } else if (transacao instanceof Transferencia) {
+      conta.saldo += transacao.valor;
+      const contaDestino = this.obterContaPorId(transacao.contaDestino.id);
+      contaDestino.saldo -= transacao.valor;
+    }
+  }
 }

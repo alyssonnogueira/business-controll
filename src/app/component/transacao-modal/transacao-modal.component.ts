@@ -22,7 +22,7 @@ import {MatSnackBar} from '@angular/material';
 export class TransacaoModalComponent implements OnInit {
 
   tipoTransacaoEnum = TipoTransacaoEnum;
-  tipoTransacao = TipoTransacaoEnum.DESPESA;
+  tipoTransacao = 'DESPESA';
   keys = Object.keys;
   categoriaEnum = CategoriaDespesaEnum;
   tipoRendaEnum = TipoRendaEnum;
@@ -54,6 +54,21 @@ export class TransacaoModalComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.data.id) {
+      if ('categoria' in this.data) {
+        this.tipoTransacao = 'DESPESA';
+        const despesa = this.data as Despesa;
+        despesa.categoria = this.categoriaEnum[despesa.categoria];
+      } else if ('tipoRenda' in this.data) {
+        this.tipoTransacao = 'RECEITA';
+        const receita = this.data as Receita;
+        receita.tipoRenda = this.tipoRendaEnum[receita.tipoRenda];
+      } else if ('contaDestino' in this.data) {
+        this.tipoTransacao = 'TRANSFERENCIA';
+      }
+    } else {
+      this.data.data = new Date();
+    }
   }
 
   get responsaveis(): Responsavel[] {

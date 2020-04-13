@@ -25,7 +25,12 @@ tr:hover{
   margin: 20px;
 }
 
-.filtro { 
+.filtro {
   margin: 20px 20px 0px 20px;
   width: 500px;
+}
+
+.mat-column-edit,
+.mat-column-delete{
+  max-width: 20px;
 }

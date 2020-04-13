@@ -7,6 +7,7 @@ import { Despesa } from '../model/despesa';
 import { Receita } from '../model/receita';
 import { CategoriaDespesaEnum } from '../model/categoriaDespesa.enum';
 import { TipoRendaEnum } from '../model/tipoRenda.enum';
+import {NgxIndexedDBService} from 'ngx-indexed-db';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +15,10 @@ import { TipoRendaEnum } from '../model/tipoRenda.enum';
 export class TransacaoService {
 
   private transacoes: Transacao[] = [];
+  private key = 'transacao';
 
-  constructor(private responsavelService: ResponsavelService, private contaService: ContaService) {
+  constructor(private responsavelService: ResponsavelService, private contaService: ContaService,
+              private dbService: NgxIndexedDBService) {
     const transacao1 = new Despesa(1, new Date(), 1.5, 'teste 1',
                                   this.responsavelService.obterResponsavelPorId(1),
                                   this.contaService.obterContaPorId(1), CategoriaDespesaEnum.ALIMENTACAO);
@@ -35,6 +38,18 @@ export class TransacaoService {
         this.contaService.obterContaPorId(2));
     transacao3.contaDestino = this.contaService.obterContaPorId(2);
     this.transacoes.push(transacao3);
+    this.dbService.add(this.key, transacao1).then(
+      () => console.log('Salvo'),
+      error => {
+        console.log(error);
+      }
+    );
+    this.dbService.getAll(this.key).then(
+      transacao => {
+        console.log(transacao);
+        this.transacoes = transacao as Transacao[];
+      }
+    );
   }
 
   obterTodasTransacoes(): Transacao[] {
@@ -42,9 +57,15 @@ export class TransacaoService {
   }
 
   salvarTransacao(transacao: Transacao): void {
-    transacao.id = this.transacoes.length + 1;
+    transacao.id = this.transacoes.length > 0 ? this.transacoes[this.transacoes.length - 1].id + 1 : 1;
     this.transacoes.push(transacao);
     this.contaService.alterarSaldoConta(transacao);
+  }
+
+  desfazerTransacao(transacao: Transacao): void {
+    this.contaService.desfazerAlteracao(transacao);
+    const index = this.transacoes.indexOf(transacao);
+    this.transacoes.splice(index, 1);
   }
 
 }
