@@ -15,6 +15,7 @@ export class ContaModalComponent implements OnInit {
 
   tipoContaEnum = TipoContaEnum;
   keys = Object.keys;
+  responsaveis = [];
 
   constructor(
     public dialogRef: MatDialogRef<ContaModalComponent>,
@@ -30,9 +31,6 @@ export class ContaModalComponent implements OnInit {
   }
 
   ngOnInit() {
-  }
-
-  get responsaveis(): Responsavel[] {
-    return this.responsavelService.obterTodosResponsaveis();
+    this.responsavelService.obterTodosResponsaveis().then(responsaveis => this.responsaveis = responsaveis);
   }
 }

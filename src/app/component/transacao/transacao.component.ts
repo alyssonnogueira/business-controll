@@ -23,12 +23,14 @@ export class TransacaoComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private transacaoService: TransacaoService, public dialog: MatDialog ) {
-    this.dataSource = new MatTableDataSource(transacaoService.obterTodasTransacoes());
   }
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.transacaoService.obterTodasTransacoes().then(transacoes => {
+      this.dataSource = new MatTableDataSource(transacoes);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   applyFilter(filterValue: string) {
@@ -47,26 +49,31 @@ export class TransacaoComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.transacaoService.salvarTransacao(result);
-      this.dataSource.data = this.transacaoService.obterTodasTransacoes();
+      this.atualizarDataSource();
     });
   }
 
   editarTransacao(transacao: Transacao) {
     const dialogRef = this.dialog.open(TransacaoModalComponent, {
       width: '800px',
-      data: transacao // Object.assign({}, transacao)
+      data: transacao
     });
 
     dialogRef.afterClosed().subscribe(result => {
       transacao = result;
-      // this.transacaoService.salvarTransacao(result);
-      // this.dataSource.data = this.transacaoService.obterTodasTransacoes();
+      this.atualizarDataSource();
     });
   }
 
   excluirTransacao(transacao: Transacao) {
     this.transacaoService.desfazerTransacao(transacao);
-    this.dataSource.data = this.transacaoService.obterTodasTransacoes();
+    this.atualizarDataSource();
+  }
+
+  atualizarDataSource() {
+    this.transacaoService.obterTodasTransacoes().then(transacoes => {
+      this.dataSource.data = transacoes;
+    });
   }
 
   obterTipoTransacao(transacao): string {

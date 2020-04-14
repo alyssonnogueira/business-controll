@@ -19,13 +19,14 @@ export class ResponsavelComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  constructor(private responsavelService: ResponsavelService, public dialog: MatDialog ) {
-    this.dataSource = new MatTableDataSource(responsavelService.obterTodosResponsaveis());
-  }
+  constructor(private responsavelService: ResponsavelService, public dialog: MatDialog ) {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
+      this.dataSource = new MatTableDataSource(responsaveis);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   applyFilter(filterValue: string) {
@@ -44,7 +45,13 @@ export class ResponsavelComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.responsavelService.salvarResponsavel(result);
-      this.dataSource.data = this.responsavelService.obterTodosResponsaveis();
+      this.atualizarDataSource();
+    });
+  }
+
+  atualizarDataSource() {
+    this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
+      this.dataSource.data = responsaveis;
     });
   }
 

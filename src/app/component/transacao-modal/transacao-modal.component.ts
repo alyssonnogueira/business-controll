@@ -12,6 +12,7 @@ import { Conta } from '../../model/conta';
 import { CategoriaDespesaEnum } from '../../model/categoriaDespesa.enum';
 import { TipoRendaEnum } from '../../model/tipoRenda.enum';
 import {MatSnackBar} from '@angular/material';
+import { from, Observable, of } from 'rxjs';
 
 
 @Component({
@@ -27,6 +28,8 @@ export class TransacaoModalComponent implements OnInit {
   categoriaEnum = CategoriaDespesaEnum;
   tipoRendaEnum = TipoRendaEnum;
   private mensagemValidacao = 'POR FAVOR PREENCHA TODOS OS CAMPOS';
+  responsaveis = [];
+  contas = [];
 
   constructor(
     public dialogRef: MatDialogRef<TransacaoModalComponent>,
@@ -69,14 +72,12 @@ export class TransacaoModalComponent implements OnInit {
     } else {
       this.data.data = new Date();
     }
+    this.responsavelService.obterTodosResponsaveis().then(responsaveis => this.responsaveis = responsaveis);
   }
 
-  get responsaveis(): Responsavel[] {
-    return this.responsavelService.obterTodosResponsaveis();
-  }
-
-  get contas(): Conta[] {
-    return this.data.responsavel != null ? this.contaService.obterContaPorIdResponsavel(this.data.responsavel.id) : [];
+  obterContas() {
+    return this.data.responsavel != null ?
+      this.contaService.obterContaPorIdResponsavel(this.data.responsavel.id).then(contas => this.contas = contas) : [];
   }
 
   get isDespesa(): boolean {

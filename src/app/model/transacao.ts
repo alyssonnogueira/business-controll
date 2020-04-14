@@ -10,8 +10,7 @@ export abstract class Transacao {
   responsavel: Responsavel;
   conta: Conta;
 
-  constructor(id: number, data: Date, valor: number, descricao: string, responsavel: Responsavel, conta: Conta) {
-    this.id = id;
+  constructor(data: Date, valor: number, descricao: string, responsavel: Responsavel, conta: Conta) {
     this.data = data;
     this.valor = valor;
     this.descricao = descricao;

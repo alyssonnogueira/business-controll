@@ -8,8 +8,7 @@ export class Conta {
     responsavel: Responsavel;
     tipoConta: TipoContaEnum;
 
-    constructor(id: number, nome: string, saldoOriginal: number, responsavel: Responsavel, tipoConta: TipoContaEnum) {
-        this.id = id;
+    constructor(nome: string, saldoOriginal: number, responsavel: Responsavel, tipoConta: TipoContaEnum) {
         this.nome = nome;
         this.saldoOriginal = saldoOriginal;
         this.saldo = saldoOriginal;

@@ -14,7 +14,7 @@
         <mat-label>Descrição</mat-label>
         <input matInput [(ngModel)]="data.descricao">
     </mat-form-field>
-    <mat-select placeholder="Selecione o Responsavel" [(ngModel)]="data.responsavel" [(value)]="data.responsavel" required>
+    <mat-select placeholder="Selecione o Responsavel" [(ngModel)]="data.responsavel" [(value)]="data.responsavel" (selectionChange)="obterContas($event)"required>
         <mat-option *ngFor="let responsavel of responsaveis; let idx = index" [value]=responsavel>{{responsavel.nome}}</mat-option>
     </mat-select>
     <mat-select placeholder="Selecione a Conta" [(ngModel)]="data.conta" [(value)]="data.conta" required>

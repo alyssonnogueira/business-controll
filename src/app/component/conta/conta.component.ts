@@ -17,13 +17,14 @@ export class ContaComponent implements OnInit {
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
-  constructor(private contaService: ContaService, public dialog: MatDialog ) {
-    this.dataSource = new MatTableDataSource(contaService.obterTodasContas());
-  }
+  constructor(private contaService: ContaService, public dialog: MatDialog ) {}
 
   ngOnInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    this.contaService.obterTodasContas().then(contas => {
+      this.dataSource = new MatTableDataSource(contas);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
   applyFilter(filterValue: string) {
@@ -42,7 +43,13 @@ export class ContaComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       this.contaService.salvarConta(result);
-      this.dataSource.data = this.contaService.obterTodasContas();
+      this.atualizarDataSource();
+    });
+  }
+
+  atualizarDataSource() {
+    this.contaService.obterTodasContas().then(contas => {
+      this.dataSource.data = contas;
     });
   }
 }
