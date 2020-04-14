@@ -54,5 +54,4 @@ export class IndexedDBConfigService implements DBConfig {
       }
     ];
   }
-
 }

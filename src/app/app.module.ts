@@ -44,6 +44,7 @@ import { ResponsavelComponent } from './component/responsavel/responsavel.compon
 import { ResponsavelModalComponent } from './component/responsavel-modal/responsavel-modal.component';
 import {NgxIndexedDBModule} from 'ngx-indexed-db';
 import {IndexedDBConfigService} from './services/indexed-dbconfig.service';
+import { FileUploadModalComponent } from './component/file-upload-modal/file-upload-modal.component';
 
 @NgModule({
   declarations: [
@@ -57,11 +58,13 @@ import {IndexedDBConfigService} from './services/indexed-dbconfig.service';
     ContaModalComponent,
     ResponsavelComponent,
     ResponsavelModalComponent,
+    FileUploadModalComponent,
   ],
   entryComponents: [
     TransacaoModalComponent,
     ContaModalComponent,
-    ResponsavelModalComponent
+    ResponsavelModalComponent,
+    FileUploadModalComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,8 @@
+<h1 mat-dialog-title> Realizar Upload de Banco de Dados </h1>
+<mat-dialog-content>
+    <input type="file" #file (change)="adicionarArquivo($event.target.files)"/>
+</mat-dialog-content>
+<div mat-dialog-actions>
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-button (click)="onSave()" cdkFocusInitial>Salvar</button>
+</div>

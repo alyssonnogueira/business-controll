@@ -28,6 +28,9 @@
         </button>
         <span>BusinessControlV3</span>
         <span class="spacer"></span>
+        <button mat-icon-button [matMenuTriggerFor]="saveMenu" matTooltip="Salvar">
+          <mat-icon>save</mat-icon>
+        </button>
         <button mat-icon-button [matMenuTriggerFor]="userMenu" matTooltip={{currentUserName}}>
           <mat-icon>person</mat-icon>
         </button>
@@ -41,4 +44,9 @@
   <a mat-menu-item routerLink='profile'>Perfil</a>
   <a mat-menu-item routerLink='help'>Ajuda</a>
   <a mat-menu-item (click)="logout()">Sair</a>
+</mat-menu>
+
+<mat-menu #saveMenu="matMenu">
+  <a mat-menu-item (click)='download()'>Exportar</a>
+  <a mat-menu-item (click)='upload()'>Importar</a>
 </mat-menu>
