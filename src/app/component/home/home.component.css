@@ -1,0 +1,31 @@
+.mat-grid-tile{
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    display: grid;
+    align-items: center;
+    justify-content: left;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+label {
+    font-size: medium;
+    margin: 5px;
+}
+
+.mat-list-item {
+    height: 150px
+}
+
+.nomeColuna {
+    text-align: center;
+}
+
+.nomeResponsavel{
+    width: 50px;
+    text-align: center;
+}

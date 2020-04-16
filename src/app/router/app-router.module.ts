@@ -1,3 +1,4 @@
+import { HomeComponent } from './../component/home/home.component';
 import { ContaComponent } from '../component/conta/conta.component';
 import { TransacaoComponent } from '../component/transacao/transacao.component';
 import { NgModule } from '@angular/core';
@@ -6,7 +7,8 @@ import {RouterModule} from '@angular/router';
 import { ResponsavelComponent } from '../component/responsavel/responsavel.component';
 
 const routes = [
-  { path: '', component: TransacaoComponent },
+  { path: '', component: HomeComponent },
+  { path: 'home', component: HomeComponent },
   { path: 'transacoes', component: TransacaoComponent },
   { path: 'contas', component: ContaComponent },
   { path: 'responsaveis', component: ResponsavelComponent }

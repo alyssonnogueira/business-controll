@@ -45,6 +45,9 @@ import { ResponsavelModalComponent } from './component/responsavel-modal/respons
 import {NgxIndexedDBModule} from 'ngx-indexed-db';
 import {IndexedDBConfigService} from './services/indexed-dbconfig.service';
 import { FileUploadModalComponent } from './component/file-upload-modal/file-upload-modal.component';
+import { ChartsModule } from 'ng2-charts';
+import { HomeComponent } from './component//home/home.component';
+import { DoughnutChartComponent } from './component/doughnut-chart/doughnut-chart.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +62,8 @@ import { FileUploadModalComponent } from './component/file-upload-modal/file-upl
     ResponsavelComponent,
     ResponsavelModalComponent,
     FileUploadModalComponent,
+    HomeComponent,
+    DoughnutChartComponent,
   ],
   entryComponents: [
     TransacaoModalComponent,
@@ -109,7 +114,9 @@ import { FileUploadModalComponent } from './component/file-upload-modal/file-upl
     MatToolbarModule,
     MatTooltipModule,
     // IndexedDB
-    NgxIndexedDBModule.forRoot(new IndexedDBConfigService())
+    NgxIndexedDBModule.forRoot(new IndexedDBConfigService()),
+    // Charts
+    ChartsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
