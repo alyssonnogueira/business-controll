@@ -6,7 +6,10 @@ import {DBConfig, ObjectStoreMeta} from 'ngx-indexed-db/lib/ngx-indexed-db.meta'
 })
 export class IndexedDBConfigService implements DBConfig {
 
-  migrationFactory: () => { [p: number]: (db: IDBDatabase, transaction: IDBTransaction) => void };
+  migrationFactory?: () => {
+    [p: number]: (db: IDBDatabase, transaction: IDBTransaction) => void;
+  };
+
   name: string;
   // objectStoresMeta: ObjectStoreMeta[];
   version: number;
@@ -14,6 +17,7 @@ export class IndexedDBConfigService implements DBConfig {
   constructor() {
     this.name = 'BusinessControll';
     this.version = 1;
+    this.migrationFactory = migrationFactory;
   }
 
   get objectStoresMeta(): ObjectStoreMeta[] {
@@ -54,4 +58,14 @@ export class IndexedDBConfigService implements DBConfig {
       }
     ];
   }
+}
+
+export function migrationFactory() {
+  return {
+    1: (db: IDBDatabase, transaction: IDBTransaction) => {
+      const store = transaction.objectStore('transacao');
+      store.createIndex('tipoTransacao', 'tipoTransacao', { unique: false });
+      return;
+    }
+  };
 }

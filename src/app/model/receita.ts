@@ -1,3 +1,4 @@
+import { TipoTransacaoEnum } from './tipoTransacao.enum';
 import { Transacao } from './transacao';
 import { TipoRendaEnum } from './tipoRenda.enum';
 import { Conta } from './conta';
@@ -8,7 +9,7 @@ export class Receita extends Transacao {
 
     constructor(data: Date, valor: number, descricao: string,
                 responsavel: Responsavel, conta: Conta, tipoRenda: TipoRendaEnum) {
-        super(data, valor, descricao, responsavel, conta);
+        super(data, valor, descricao, responsavel, conta, TipoTransacaoEnum.RECEITA);
         this.tipoRenda = tipoRenda;
     }
 

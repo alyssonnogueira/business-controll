@@ -1,3 +1,4 @@
+import { TipoTransacaoEnum } from './tipoTransacao.enum';
 import { Transacao } from './transacao';
 import { Conta } from './conta';
 import { Responsavel } from './responsavel';
@@ -7,11 +8,11 @@ export class Transferencia extends Transacao {
 
     constructor(data: Date, valor: number, descricao: string,
                 responsavel: Responsavel, conta: Conta, contaDestino: Conta) {
-        super(data, valor, descricao, responsavel, conta);
+        super(data, valor, descricao, responsavel, conta, TipoTransacaoEnum.TRANSFERENCIA);
         this.contaDestino = contaDestino;
     }
 
-static jsonToDespesa(json): Transferencia {
-return new Transferencia(json.data, json.valor, json.descricao, json.responsavel, json.conta, json.tipoRenda);
-}
+    static jsonToDespesa(json): Transferencia {
+        return new Transferencia(json.data, json.valor, json.descricao, json.responsavel, json.conta, json.tipoRenda);
+    }
 }
