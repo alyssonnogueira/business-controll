@@ -23,4 +23,9 @@ export class DoughnutChartComponent implements OnInit {
   ngOnInit() {
   }
 
+  get total() {
+    const valor = this.dados[0] as number[];
+    return this.dados[0].length > 0 ? valor.reduce((acc, atual) => acc + atual, 0) : 0;
+  }
+
 }
