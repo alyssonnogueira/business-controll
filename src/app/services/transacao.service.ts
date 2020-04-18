@@ -53,6 +53,15 @@ export class TransacaoService {
     this.dbService.delete(this.key, transacao.id);
   }
 
+  async editarTransacao(transacaoDesfeita, novaTransacao): Promise<void> {
+    this.desfazerTransacao(transacaoDesfeita);
+    await this.contaService.desfazerAlteracao(transacaoDesfeita);
+    await this.dbService.delete(this.key, transacaoDesfeita);
+    delete novaTransacao.id;
+    await this.dbService.add(this.key, novaTransacao);
+    await this.contaService.alterarSaldoConta(novaTransacao);
+  }
+
   async mockData() {
     const transacoes = await this.obterTodasTransacoes();
     if (transacoes == null || transacoes.length === 0) {

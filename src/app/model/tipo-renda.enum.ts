@@ -3,5 +3,7 @@ export enum TipoRendaEnum {
     RENDIMENTO = 'Rendimento',
     REEMBOLSO = 'Reembolso',
     JUROS = 'Juros',
-    OUTROS = 'Outros'
+    OUTROS = 'Outros',
+    VALE_REFEICAO = 'Vale Refeição',
+    VALE_ALIMENTACAO = 'Vale Alimentação'
 }

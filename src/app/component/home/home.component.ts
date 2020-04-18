@@ -1,3 +1,4 @@
+import { MesesEnum } from './../../model/meses.enum';
 import { Despesa } from './../../model/despesa';
 import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
 import { Receita } from './../../model/receita';
@@ -30,6 +31,7 @@ export class HomeComponent implements OnInit {
   hoje = new Date();
   dataInicial = new Date((this.hoje.getMonth() + 1) + '/01/' + this.hoje.getFullYear());
   dataFinal = new Date((this.hoje.getMonth() + 2) + '/01/' + this.hoje.getFullYear());
+  mesSelecionado = MesesEnum[this.hoje.getMonth()];
 
   constructor(private responsavelService: ResponsavelService, private transacaoService: TransacaoService) { }
 
@@ -40,10 +42,7 @@ export class HomeComponent implements OnInit {
       } else {
         this.responsaveis = responsaveis.length === 1 ? [responsaveis[0]] : [];
       }
-      this.inicializaOsDados(responsaveis);
-      this.coletarDadosDasDespesas(responsaveis).finally(() => this.isDespesaLoading = false);
-      this.coletarDadosDasReceitas(responsaveis).finally(() => this.isReceitaLoading = false);
-      this.coletarDadosDasDespesas(responsaveis, true).finally(() => this.isCreditoLoading = false);
+      this.atualizarDados();
     });
     this.rendaEnum = this.keys(TipoRendaEnum).map(tipoRenda => TipoRendaEnum[tipoRenda]);
     this.categoriaEnum = this.keys(CategoriaDespesaEnum).map(categoria => CategoriaDespesaEnum[categoria]);
@@ -78,6 +77,16 @@ export class HomeComponent implements OnInit {
 
   obterDadosCartaoDeCredito(responsavel): MultiDataSet {
     return this.dados[responsavel.id] ? this.dados[responsavel.id].credito : [[]];
+  }
+
+  atualizarDados() {
+    this.inicializaOsDados(this.responsaveis);
+    this.isDespesaLoading = true;
+    this.isReceitaLoading = true;
+    this.isCreditoLoading = true;
+    this.coletarDadosDasDespesas(this.responsaveis).finally(() => this.isDespesaLoading = false);
+    this.coletarDadosDasReceitas(this.responsaveis).finally(() => this.isReceitaLoading = false);
+    this.coletarDadosDasDespesas(this.responsaveis, true).finally(() => this.isCreditoLoading = false);
   }
 
   async coletarDadosDasDespesas(todosResponsaveis: Responsavel[], isCredito = false) {
@@ -133,5 +142,25 @@ export class HomeComponent implements OnInit {
         });
       });
     }
+  }
+
+  diminuirMes() {
+    if (MesesEnum[this.mesSelecionado] > 0 ) {
+      const mes = MesesEnum[this.mesSelecionado] - 1;
+      this.dataInicial = new Date((mes + 1) + '/01/' + this.hoje.getFullYear());
+      this.dataFinal = new Date((mes + 2) + '/01/' + this.hoje.getFullYear());
+      this.mesSelecionado = MesesEnum[mes];
+    }
+    this.atualizarDados();
+  }
+
+  aumentarMes() {
+    if (MesesEnum[this.mesSelecionado] < 12 ) {
+      const mes = MesesEnum[this.mesSelecionado] + 1;
+      this.dataInicial = new Date((mes + 1) + '/01/' + this.hoje.getFullYear());
+      this.dataFinal = new Date((mes + 2) + '/01/' + this.hoje.getFullYear());
+      this.mesSelecionado = MesesEnum[mes];
+    }
+    this.atualizarDados();
   }
 }

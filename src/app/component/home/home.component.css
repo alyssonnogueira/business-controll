@@ -29,3 +29,8 @@ label {
     width: 50px;
     text-align: center;
 }
+
+.mesesDoAno{
+    display: flex;
+    margin-left: 42%;
+}

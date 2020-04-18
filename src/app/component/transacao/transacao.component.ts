@@ -1,3 +1,5 @@
+import { CategoriaDespesaEnum } from 'src/app/model/categoria-despesa.enum';
+import { TipoRendaEnum } from './../../model/tipo-renda.enum';
 import { Transferencia } from '../../model/transferencia';
 import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
 import { Receita } from '../../model/receita';
@@ -16,7 +18,7 @@ import {MatDialog } from '@angular/material/dialog';
 })
 export class TransacaoComponent implements OnInit {
 
-  displayedColumns: string[] = ['id', 'data', 'valor', 'descricao', 'responsavel', 'tipoPagamento', 'conta', 'delete'];
+  displayedColumns: string[] = ['id', 'data', 'valor', 'descricao', 'categoria', 'responsavel', 'tipoPagamento', 'conta', 'edit', 'delete'];
   dataSource: MatTableDataSource<Transacao>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -56,12 +58,12 @@ export class TransacaoComponent implements OnInit {
   editarTransacao(transacao: Transacao) {
     const dialogRef = this.dialog.open(TransacaoModalComponent, {
       width: '800px',
-      data: transacao
+      data: Object.assign({}, transacao)
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      transacao = result;
-      this.atualizarDataSource();
+    dialogRef.afterClosed().subscribe(novaTransacao => {
+      this.transacaoService.editarTransacao(transacao, novaTransacao)
+      .finally(() => this.atualizarDataSource());
     });
   }
 
@@ -76,27 +78,23 @@ export class TransacaoComponent implements OnInit {
     });
   }
 
-  obterTipoTransacao(transacao): string {
-    if (transacao instanceof Despesa) {
-      return TipoTransacaoEnum.DESPESA;
-    }
-    if (transacao instanceof Receita) {
-      return TipoTransacaoEnum.RECEITA;
-    }
-    if (transacao instanceof Transferencia) {
-      return TipoTransacaoEnum.TRANSFERENCIA;
-    }
-    return '';
-  }
-
-  obterClasseTransacao(transacao): string {
-    const tipoTransacao = this.obterTipoTransacao(transacao);
+  obterClasseTransacao(transacao: Transacao): string {
     let classe = '';
-    switch (tipoTransacao) {
+    switch (transacao.tipoTransacao) {
       case TipoTransacaoEnum.DESPESA: classe = 'despesa'; break;
       case TipoTransacaoEnum.RECEITA: classe = 'receita'; break;
       case TipoTransacaoEnum.TRANSFERENCIA: classe = 'transferencia'; break;
     }
     return classe;
+  }
+
+  obterCategoria(transacao): string {
+    let categoria = null;
+    switch (transacao.tipoTransacao) {
+      case TipoTransacaoEnum.DESPESA: categoria = CategoriaDespesaEnum[transacao.categoria]; break;
+      case TipoTransacaoEnum.RECEITA: categoria = TipoRendaEnum[transacao.tipoRenda]; break;
+      case TipoTransacaoEnum.TRANSFERENCIA: categoria = TipoTransacaoEnum.TRANSFERENCIA; break;
+    }
+    return categoria;
   }
 }

@@ -8,6 +8,7 @@ import { TipoContaEnum } from '../model/tipo-conta.enum';
 import { Transacao } from '../model/transacao';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { Responsavel } from '../model/responsavel';
+import { TipoTransacaoEnum } from '../model/tipo-transacao.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -37,30 +38,36 @@ export class ContaService {
     this.dbService.add(this.key, conta);
   }
 
+  atualizarConta(conta: Conta): Promise<Conta> {
+    return this.dbService.update(this.key, conta);
+  }
+
   async alterarSaldoConta(transacao: Transacao) {
     const conta = await this.obterContaPorId(transacao.conta.id);
-    if (transacao instanceof Despesa) {
+    if (TipoTransacaoEnum.DESPESA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
-    } else if (transacao instanceof Receita) {
+    } else if (TipoTransacaoEnum.RECEITA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
-    } else if (transacao instanceof Transferencia) {
+    } else if (TipoTransacaoEnum.TRANSFERENCIA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
-      const contaDestino = await this.obterContaPorId(transacao.contaDestino.id);
+      const contaDestino = await this.obterContaPorId((transacao as Transferencia).contaDestino.id);
       contaDestino.saldo += transacao.valor;
     }
+    await this.atualizarConta(conta);
   }
 
   async desfazerAlteracao(transacao: Transacao) {
     const conta = await this.obterContaPorId(transacao.conta.id);
-    if (transacao instanceof Despesa) {
+    if (TipoTransacaoEnum.DESPESA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
-    } else if (transacao instanceof Receita) {
+    } else if (TipoTransacaoEnum.RECEITA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
-    } else if (transacao instanceof Transferencia) {
+    } else if (TipoTransacaoEnum.TRANSFERENCIA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
-      const contaDestino = await this.obterContaPorId(transacao.contaDestino.id);
+      const contaDestino = await this.obterContaPorId((transacao as Transferencia).contaDestino.id);
       contaDestino.saldo -= transacao.valor;
     }
+    await this.atualizarConta(conta);
   }
 
   async mockData() {
