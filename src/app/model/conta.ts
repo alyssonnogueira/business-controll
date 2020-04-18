@@ -1,5 +1,5 @@
 import { Responsavel } from './responsavel';
-import { TipoContaEnum } from './tipoConta.enum';
+import { TipoContaEnum } from './tipo-conta.enum';
 export class Conta {
     id: number;
     nome: string;

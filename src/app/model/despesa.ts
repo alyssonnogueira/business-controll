@@ -1,8 +1,8 @@
 import { Transacao } from './transacao';
-import { CategoriaDespesaEnum } from './categoriaDespesa.enum';
+import { CategoriaDespesaEnum } from './categoria-despesa.enum';
 import { Responsavel } from './responsavel';
 import { Conta } from './conta';
-import { TipoTransacaoEnum } from './tipoTransacao.enum';
+import { TipoTransacaoEnum } from './tipo-transacao.enum';
 
 export class Despesa extends Transacao {
     categoria: CategoriaDespesaEnum;

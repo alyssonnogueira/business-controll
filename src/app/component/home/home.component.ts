@@ -1,15 +1,15 @@
 import { Despesa } from './../../model/despesa';
-import { TipoTransacaoEnum } from './../../model/tipoTransacao.enum';
+import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
 import { Receita } from './../../model/receita';
 import { Responsavel } from './../../model/responsavel';
-import { CategoriaDespesaEnum } from 'src/app/model/categoriaDespesa.enum';
-import { TipoRendaEnum } from './../../model/tipoRenda.enum';
+import { CategoriaDespesaEnum } from 'src/app/model/categoria-despesa.enum';
+import { TipoRendaEnum } from '../../model/tipo-renda.enum';
 import { ContaService } from 'src/app/services/conta.service';
 import { TransacaoService } from './../../services/transacao.service';
 import { ResponsavelService } from './../../services/responsavel.service';
 import { Component, OnInit } from '@angular/core';
 import { Label, MultiDataSet } from 'ng2-charts';
-import { TipoContaEnum } from 'src/app/model/tipoConta.enum';
+import { TipoContaEnum } from 'src/app/model/tipo-conta.enum';
 
 @Component({
   selector: 'app-home',

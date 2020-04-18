@@ -1,13 +1,13 @@
 import { Transferencia } from './../model/transferencia';
 import { Receita } from './../model/receita';
-import { TipoTransacaoEnum } from './../model/tipoTransacao.enum';
+import { TipoTransacaoEnum } from '../model/tipo-transacao.enum';
 import { ContaService } from './conta.service';
 import { ResponsavelService } from './responsavel.service';
 import { Injectable } from '@angular/core';
 import {Transacao} from '../model/transacao';
 import { Despesa } from '../model/despesa';
-import { CategoriaDespesaEnum } from '../model/categoriaDespesa.enum';
-import { TipoRendaEnum } from '../model/tipoRenda.enum';
+import { CategoriaDespesaEnum } from '../model/categoria-despesa.enum';
+import { TipoRendaEnum } from '../model/tipo-renda.enum';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
 import { Responsavel } from '../model/responsavel';
 

@@ -1,5 +1,5 @@
 import { Transferencia } from '../../model/transferencia';
-import { TipoTransacaoEnum } from '../../model/tipoTransacao.enum';
+import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
 import { Receita } from '../../model/receita';
 import { Despesa } from '../../model/despesa';
 import { TransacaoService } from '../../services/transacao.service';

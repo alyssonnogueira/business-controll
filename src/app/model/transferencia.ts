@@ -1,4 +1,4 @@
-import { TipoTransacaoEnum } from './tipoTransacao.enum';
+import { TipoTransacaoEnum } from './tipo-transacao.enum';
 import { Transacao } from './transacao';
 import { Conta } from './conta';
 import { Responsavel } from './responsavel';

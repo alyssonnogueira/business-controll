@@ -4,7 +4,7 @@ import { Despesa } from './../model/despesa';
 import { ResponsavelService } from './responsavel.service';
 import { Injectable } from '@angular/core';
 import { Conta } from '../model/conta';
-import { TipoContaEnum } from '../model/tipoConta.enum';
+import { TipoContaEnum } from '../model/tipo-conta.enum';
 import { Transacao } from '../model/transacao';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { Responsavel } from '../model/responsavel';
