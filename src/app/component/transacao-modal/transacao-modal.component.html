@@ -8,7 +8,7 @@
     </mat-form-field>
     <mat-form-field class="form-valor">
         <mat-label>Valor</mat-label>
-        <input type="number" matInput [(ngModel)]="data.valor">
+        <input type="text" matInput currencyMask placeholder="0,00" [(ngModel)]="data.valor">
     </mat-form-field>
     <mat-form-field>
         <mat-label>Descrição</mat-label>

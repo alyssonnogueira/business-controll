@@ -1,3 +1,4 @@
+import { CurrencyFormatPipe } from './../../pipes/currency-format.pipe';
 import { CategoriaDespesaEnum } from 'src/app/model/categoria-despesa.enum';
 import { TipoRendaEnum } from './../../model/tipo-renda.enum';
 import { Transferencia } from '../../model/transferencia';
@@ -23,6 +24,8 @@ export class TransacaoComponent implements OnInit {
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
+
+  public currencyFormat = new CurrencyFormatPipe('pt-BR');
 
   constructor(private transacaoService: TransacaoService, public dialog: MatDialog ) {
   }

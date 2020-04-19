@@ -1,3 +1,4 @@
+import { CurrencyFormatPipe } from './../../pipes/currency-format.pipe';
 import { ContaModalComponent } from './../conta-modal/conta-modal.component';
 import { ContaService } from '../../services/conta.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -13,6 +14,7 @@ export class ContaComponent implements OnInit {
 
   displayedColumns: string[] = ['id', 'nome', 'saldo', 'responsavel', 'tipoConta'];
   dataSource: MatTableDataSource<Conta>;
+  public currencyFormat = new CurrencyFormatPipe('pt-BR');
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;

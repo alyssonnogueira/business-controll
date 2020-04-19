@@ -18,7 +18,7 @@
 
     <ng-container matColumnDef="valor">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
-      <td mat-cell *matCellDef="let transacao" [ngClass]="obterClasseTransacao(transacao)"> R$ {{transacao.valor}} </td>
+      <td mat-cell *matCellDef="let transacao" [ngClass]="obterClasseTransacao(transacao)"> {{transacao.valor | currencyFormat}} </td>
     </ng-container>
 
     <ng-container matColumnDef="descricao">

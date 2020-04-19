@@ -1,5 +1,7 @@
+import { CurrencyFormatPipe } from './pipes/currency-format.pipe';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, LOCALE_ID } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -33,7 +35,7 @@ import {
   MatRippleModule,
   MatSelectModule,
   MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule,
-  MatStepperModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule
+  MatStepperModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MAT_DATE_LOCALE, MatPaginatorIntl
 } from '@angular/material';
 import {ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
@@ -48,6 +50,24 @@ import { FileUploadModalComponent } from './component/file-upload-modal/file-upl
 import { ChartsModule } from 'ng2-charts';
 import { HomeComponent } from './component//home/home.component';
 import { DoughnutChartComponent } from './component/doughnut-chart/doughnut-chart.component';
+import localePTBRExtra from '@angular/common/locales/extra/pt';
+import localePTBR from '@angular/common/locales/pt';
+import { registerLocaleData } from '@angular/common';
+import { CurrencyMaskModule } from 'ng2-currency-mask';
+import { NgxCurrencyModule } from 'ngx-currency';
+
+registerLocaleData(localePTBR, 'pt-BR', localePTBRExtra);
+export const customCurrencyMaskConfig = {
+  align: 'left',
+  allowNegative: false,
+  allowZero: true,
+  decimal: ',',
+  precision: 2,
+  prefix: '',
+  suffix: '',
+  thousands: '.',
+  nullable: true
+};
 
 @NgModule({
   declarations: [
@@ -64,6 +84,7 @@ import { DoughnutChartComponent } from './component/doughnut-chart/doughnut-char
     FileUploadModalComponent,
     HomeComponent,
     DoughnutChartComponent,
+    CurrencyFormatPipe,
   ],
   entryComponents: [
     TransacaoModalComponent,
@@ -116,9 +137,14 @@ import { DoughnutChartComponent } from './component/doughnut-chart/doughnut-char
     // IndexedDB
     NgxIndexedDBModule.forRoot(new IndexedDBConfigService()),
     // Charts
-    ChartsModule
+    ChartsModule,
+    NgxCurrencyModule.forRoot(customCurrencyMaskConfig)
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    { provide: LOCALE_ID, useValue: 'pt-BR' },
+    CurrencyFormatPipe
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
