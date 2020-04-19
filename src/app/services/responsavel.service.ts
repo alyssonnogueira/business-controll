@@ -11,7 +11,7 @@ export class ResponsavelService {
   private key = 'responsavel';
 
   constructor(private dbService: NgxIndexedDBService) {
-    this.mockData();
+    // this.mockData();
   }
 
   obterResponsavelPorId(id: number): Promise<Responsavel> {
@@ -29,8 +29,8 @@ export class ResponsavelService {
   async mockData() {
     const transacoes = await this.obterTodosResponsaveis();
     if (transacoes == null || transacoes.length === 0) {
-      this.salvarResponsavel(new Responsavel('Alysson'));
-      this.salvarResponsavel(new Responsavel('Giordana'));
+      this.salvarResponsavel(new Responsavel('Joãozinho'));
+      this.salvarResponsavel(new Responsavel('Maria'));
     }
   }
 }

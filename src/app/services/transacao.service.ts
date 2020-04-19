@@ -20,7 +20,7 @@ export class TransacaoService {
 
   constructor(private responsavelService: ResponsavelService, private contaService: ContaService,
               private dbService: NgxIndexedDBService) {
-    this.mockData();
+    // this.mockData();
   }
 
   obterTodasTransacoes(): Promise<Transacao[]> {
