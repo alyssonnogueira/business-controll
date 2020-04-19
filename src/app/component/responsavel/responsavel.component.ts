@@ -25,6 +25,7 @@ export class ResponsavelComponent implements OnInit {
     this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
       this.dataSource = new MatTableDataSource(responsaveis);
       this.dataSource.paginator = this.paginator;
+      this.dataSource.paginator.pageSize = 25;
       this.dataSource.sort = this.sort;
     });
   }
