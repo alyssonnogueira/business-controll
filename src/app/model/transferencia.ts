@@ -13,6 +13,6 @@ export class Transferencia extends Transacao {
     }
 
     static jsonToDespesa(json): Transferencia {
-        return new Transferencia(json.data, json.valor, json.descricao, json.responsavel, json.conta, json.tipoRenda);
+        return new Transferencia(json.data, json.valor, json.descricao, json.responsavel, json.conta, json.contaDestino);
     }
 }

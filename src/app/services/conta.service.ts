@@ -52,6 +52,7 @@ export class ContaService {
       conta.saldo -= transacao.valor;
       const contaDestino = await this.obterContaPorId((transacao as Transferencia).contaDestino.id);
       contaDestino.saldo += transacao.valor;
+      await this.atualizarConta(contaDestino);
     }
     await this.atualizarConta(conta);
   }
@@ -66,6 +67,7 @@ export class ContaService {
       conta.saldo += transacao.valor;
       const contaDestino = await this.obterContaPorId((transacao as Transferencia).contaDestino.id);
       contaDestino.saldo -= transacao.valor;
+      await this.atualizarConta(contaDestino);
     }
     await this.atualizarConta(conta);
   }
