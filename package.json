@@ -1,6 +1,12 @@
 {
   "name": "business-control-v3",
-  "version": "0.0.0",
+  "description": "Software para Gerenciamento de Finanças Pessoais",
+  "author": {
+    "name": "Alysson Nogueira Rodrigues",
+    "email": "alyssonnogueira@hotmail.com"
+  },
+  "license": "GNU General Public License, version 3 - GPLv3",
+  "version": "0.5.2",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
