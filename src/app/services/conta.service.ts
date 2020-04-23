@@ -18,7 +18,7 @@ export class ContaService {
   key = 'conta';
 
   constructor(private responsavelService: ResponsavelService, private dbService: NgxIndexedDBService) {
-    // this.mockData();
+    this.mockData();
   }
 
   obterContaPorId(id: number): Promise<Conta> {

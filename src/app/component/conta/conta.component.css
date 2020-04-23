@@ -2,10 +2,6 @@ table {
     width: 100%;
 }
 
-tr:hover{
-    background-color: #a6a6a6;
-}
-
 .lado{
     margin-left: 95%;
 }
@@ -17,4 +13,37 @@ tr:hover{
 .filtro { 
     margin: 20px 20px 0px 20px;
     width: 500px;
+}
+  
+tr.linha-fechada:not(.linha-expandida):hover {
+  background: whitesmoke;
+}
+
+tr.linha-fechada:not(.linha-expandida):active {
+  background: #a6a6a6;
+}
+
+tr.linha-detalhes {
+  height: 0;
+  border-bottom-width: 0;
+}
+
+.detalhes { 
+  padding-left: 42%;
+  margin-bottom: 5px;
+}
+
+.meses, .mes, .valor {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.historico {
+  text-align: center;
+  width: 20%;
+}
+
+.meses {
+  width: 18%;
+  text-align: justify;
 }

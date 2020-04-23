@@ -11,7 +11,7 @@ export class ResponsavelService {
   private key = 'responsavel';
 
   constructor(private dbService: NgxIndexedDBService) {
-    // this.mockData();
+    this.mockData();
   }
 
   obterResponsavelPorId(id: number): Promise<Responsavel> {
