@@ -45,7 +45,7 @@ export class ContaComponent implements OnInit {
     this.contaService.obterTodasContas().then(contas => {
       this.dataSource = new MatTableDataSource(contas);
       this.dataSource.paginator = this.paginator;
-      this.dataSource.paginator.pageSize = 25;
+      this.dataSource.paginator.pageSize = 10;
       this.dataSource.sort = this.sort;
     });
   }
