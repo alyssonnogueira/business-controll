@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {DBConfig, ObjectStoreMeta} from 'ngx-indexed-db/lib/ngx-indexed-db.meta';
+import { Conta } from '../model/conta';
 
 @Injectable({
   providedIn: 'root'
@@ -11,12 +12,11 @@ export class IndexedDBConfigService implements DBConfig {
   };
 
   name: string;
-  // objectStoresMeta: ObjectStoreMeta[];
   version: number;
 
   constructor() {
     this.name = 'BusinessControll';
-    this.version = 1;
+    this.version = 2;
     this.migrationFactory = migrationFactory;
   }
 
@@ -65,6 +65,17 @@ export function migrationFactory() {
     1: (db: IDBDatabase, transaction: IDBTransaction) => {
       const store = transaction.objectStore('transacao');
       store.createIndex('tipoTransacao', 'tipoTransacao', { unique: false });
+      return;
+    },
+    2: (db: IDBDatabase, transaction: IDBTransaction) => {
+      const store = transaction.objectStore('conta');
+      store.createIndex('dataCriacao', 'dataCriacao', { unique: false });
+      store.getAll().onsuccess = (event) => {
+        (event.target as IDBRequest).result.forEach((conta: Conta) => {
+          conta.dataCriacao = new Date('04/01/2020');
+          store.put(conta);
+        });
+      };
       return;
     }
   };

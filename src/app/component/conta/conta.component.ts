@@ -91,10 +91,12 @@ export class ContaComponent implements OnInit {
 
   async carregarDetalhesDaConta(conta: Conta) {
     this.isLoading = true;
+    const anoAtual = new Date().getFullYear();
     for (const mes of this.keys(MesesEnum).slice(0, 12)) {
       const mesEmNumero = parseInt(mes, 10);
-      const dataInicial = new Date((mesEmNumero + 1) + '/01/' + new Date().getFullYear());
-      const dataFinal = new Date((mesEmNumero + 2) + '/01/' + new Date().getFullYear());
+      const dataInicial = new Date((mesEmNumero + 1) + '/01/' + anoAtual);
+      const dataFinal = new Date((mesEmNumero + 2) + '/01/' + anoAtual);
+      this.totalEmMeses[mes] = conta.dataCriacao >= dataInicial && conta.dataCriacao < dataFinal ? conta.saldoOriginal : 0;
       const totalDespesas = await this.transacaoService.obterTodasDespesas(null, conta, dataInicial, dataFinal)
         .then(despesas => this.somarValorDasTransacaoes(despesas));
       const totalReceitas = await this.transacaoService.obterTodasReceitas(null, conta, dataInicial, dataFinal)
@@ -103,7 +105,11 @@ export class ContaComponent implements OnInit {
         .then(receitas => this.somarValorDasTransacaoes(receitas));
       const totalTransferenciasRealizadas = await this.transacaoService.obterTodasTransferencias(null, conta, dataInicial, dataFinal)
         .then(receitas => this.somarValorDasTransacaoes(receitas));
-      this.totalEmMeses[mes] = totalReceitas + totalTransferenciasRecebidas - totalDespesas - totalTransferenciasRealizadas;
+      const saldoMesAnterior = mesEmNumero > 0 ? this.totalEmMeses[mesEmNumero - 1] :
+                                                 (await this.saldoAnoAnterior(conta, anoAtual));
+      console.log("SaldoOriginal:" + (conta.saldo + (totalReceitas + totalTransferenciasRecebidas - totalDespesas - totalTransferenciasRealizadas) * -1));
+      this.totalEmMeses[mes] += saldoMesAnterior + totalReceitas + totalTransferenciasRecebidas
+                                                        - totalDespesas - totalTransferenciasRealizadas;
     }
     this.isLoading = false;
   }
@@ -111,5 +117,19 @@ export class ContaComponent implements OnInit {
   somarValorDasTransacaoes(transacoes: Transacao[]): number {
     return transacoes.map(transacao => transacao.valor)
                       .reduce((acumulador, valorCorrente) => acumulador + valorCorrente, 0);
+  }
+
+  async saldoAnoAnterior(conta: Conta, ano: number): Promise<number> {
+    const dataFinal = new Date('01/01' + ano);
+    const saldoInicial = conta.dataCriacao < dataFinal ? conta.saldoOriginal : 0;
+    const totalDespesas = await this.transacaoService.obterTodasDespesas(conta)
+    .then(despesas => this.somarValorDasTransacaoes(despesas.filter(despesa => despesa.data < dataFinal)));
+    const totalReceitas = await this.transacaoService.obterTodasReceitas(conta)
+      .then(receitas => this.somarValorDasTransacaoes(receitas.filter(receita => receita.data < dataFinal)));
+    const totalTransferenciasRecebidas = await this.transacaoService.obterTodasTransferencias(conta)
+      .then(transferencias => this.somarValorDasTransacaoes(transferencias.filter(transferencia => transferencia.data < dataFinal)));
+    const totalTransferenciasRealizadas = await this.transacaoService.obterTodasTransferencias(null, null, null, null, conta)
+      .then(transferencias => this.somarValorDasTransacaoes(transferencias.filter(transferencia => transferencia.data < dataFinal)));
+    return saldoInicial + totalReceitas + totalTransferenciasRecebidas - totalDespesas - totalTransferenciasRealizadas;
   }
 }
