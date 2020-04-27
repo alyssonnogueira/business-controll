@@ -11,7 +11,7 @@ export class Conta {
 
     constructor(nome: string, saldoOriginal: number, responsavel: Responsavel, tipoConta: TipoContaEnum) {
         this.nome = nome;
-        // this.saldoOriginal = saldoOriginal;
+        this.saldoOriginal = saldoOriginal;
         this.saldo = saldoOriginal;
         this.responsavel = responsavel;
         this.tipoConta = tipoConta;
