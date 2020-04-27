@@ -13,7 +13,7 @@ export class Receita extends Transacao {
         this.tipoRenda = tipoRenda;
     }
 
-    static jsonToDespesa(json): Receita {
+    static jsonToReceita(json): Receita {
         return new Receita(json.data, json.valor, json.descricao, json.responsavel, json.conta, json.tipoRenda);
     }
 }

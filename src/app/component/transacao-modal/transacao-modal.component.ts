@@ -48,11 +48,11 @@ export class TransacaoModalComponent implements OnInit {
     }
 
     if (this.isReceita && this.validarReceita(this.data as Receita)) {
-      this.dialogRef.close(Receita.jsonToDespesa(this.data));
+      this.dialogRef.close(Receita.jsonToReceita(this.data));
     }
 
     if (this.isTranferencia && this.validarTransferencia(this.data as Transferencia)) {
-      this.dialogRef.close(Transferencia.jsonToDespesa(this.data));
+      this.dialogRef.close(Transferencia.jsonToTransferencia(this.data));
     }
   }
 

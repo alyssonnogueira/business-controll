@@ -6,7 +6,7 @@
     </mat-form-field>
     <mat-form-field class="form-saldo">
         <mat-label>Saldo/Limite</mat-label>
-        <input type="text" matInput currencyMask placeholder="0,00" [(ngModel)]="data.saldo">
+        <input type="text" matInput currencyMask placeholder="0,00" [(ngModel)]="data.saldoOriginal">
     </mat-form-field>
     <mat-select placeholder="Selecione o Responsavel" [(ngModel)]="data.responsavel" [(value)]="data.responsavel" required>
         <mat-option *ngFor="let responsavel of responsaveis; let idx = index" [value]=responsavel>{{responsavel.nome}}</mat-option>

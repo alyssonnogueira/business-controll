@@ -34,7 +34,7 @@ export class TransacaoComponent implements OnInit {
     this.transacaoService.obterTodasTransacoes().then(transacoes => {
       this.dataSource = new MatTableDataSource(transacoes);
       this.dataSource.paginator = this.paginator;
-      this.dataSource.paginator.pageSize = 25;
+      this.dataSource.paginator.pageSize = 10;
       this.dataSource.sort = this.sort;
     });
   }

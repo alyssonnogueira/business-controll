@@ -1,10 +1,8 @@
 import { TipoContaEnum } from '../../model/tipo-conta.enum';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { TransacaoModalComponent } from '../transacao-modal/transacao-modal.component';
 import { Conta } from '../../model/conta';
 import { ResponsavelService } from '../../services/responsavel.service';
-import { Responsavel } from '../../model/responsavel';
 
 @Component({
   selector: 'app-conta-modal',
@@ -27,7 +25,7 @@ export class ContaModalComponent implements OnInit {
   }
 
   onSave(): void {
-    this.dialogRef.close(this.data);
+    this.dialogRef.close(Conta.jsonToConta(this.data));
   }
 
   ngOnInit() {

@@ -1,8 +1,8 @@
+import { Responsavel } from 'src/app/model/responsavel';
 import { MesesEnum } from './../../model/meses.enum';
 import { Despesa } from './../../model/despesa';
 import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
 import { Receita } from './../../model/receita';
-import { Responsavel } from './../../model/responsavel';
 import { CategoriaDespesaEnum } from 'src/app/model/categoria-despesa.enum';
 import { TipoRendaEnum } from '../../model/tipo-renda.enum';
 import { ContaService } from 'src/app/services/conta.service';
@@ -11,6 +11,7 @@ import { ResponsavelService } from './../../services/responsavel.service';
 import { Component, OnInit } from '@angular/core';
 import { Label, MultiDataSet } from 'ng2-charts';
 import { TipoContaEnum } from 'src/app/model/tipo-conta.enum';
+import { Transacao } from 'src/app/model/transacao';
 
 @Component({
   selector: 'app-home',
@@ -91,23 +92,15 @@ export class HomeComponent implements OnInit {
 
   async coletarDadosDasDespesas(todosResponsaveis: Responsavel[], isCredito = false) {
     const responsaveis = todosResponsaveis.filter(responsavel => responsavel.id !== 0);
-    const todasDespesas = await this.transacaoService.obterTodasDespesas();
-    const despesasPorResponsavel = {};
     const chave = isCredito ? 'credito' : 'despesas';
-    responsaveis.forEach(responsavel => {
-      despesasPorResponsavel[responsavel.id] = todasDespesas.filter(despesa => despesa.responsavel.id === responsavel.id);
-      this.keys(CategoriaDespesaEnum).forEach(categoria => {
-        const total = despesasPorResponsavel[responsavel.id]
-            .filter((despesa: Despesa) => despesa.data >= this.dataInicial && despesa.data < this.dataFinal)
-            .filter(despesa => despesa.categoria === categoria)
-            .filter((despesa: Despesa) => isCredito ?
-                                          despesa.conta.tipoConta === TipoContaEnum.CREDITO :
-                                          despesa.conta.tipoConta === TipoContaEnum.DEBITO)
-            .map(despesa => despesa.valor)
-            .reduce((acumulador, valorCorrente) => acumulador + valorCorrente, 0);
-        this.dados[responsavel.id][chave][0].push(total);
-      });
-    });
+
+    for (const responsavel of responsaveis) {
+      for (const categoria of this.keys(CategoriaDespesaEnum)) {
+        const despesasFiltradas = await this.transacaoService.obterTodasDespesas(responsavel,
+          null, this.dataInicial, this.dataFinal, CategoriaDespesaEnum[categoria], isCredito);
+        this.dados[responsavel.id][chave][0].push(this.somarValorDasTransacaoes(despesasFiltradas));
+      }
+    }
 
     if (todosResponsaveis.length > 1) {
       this.keys(CategoriaDespesaEnum).forEach((categoria, index) => {
@@ -121,19 +114,14 @@ export class HomeComponent implements OnInit {
 
   async coletarDadosDasReceitas(todosResponsaveis: Responsavel[]) {
     const responsaveis = todosResponsaveis.filter(responsavel => responsavel.id !== 0);
-    const todasReceitas = await this.transacaoService.obterTodasReceitas();
-    const receitaPorResponsavel = {};
-    responsaveis.forEach(responsavel => {
-      receitaPorResponsavel[responsavel.id] = todasReceitas.filter(receita => receita.responsavel.id === responsavel.id);
-      this.keys(TipoRendaEnum).forEach(renda => {
-        const total = receitaPorResponsavel[responsavel.id]
-            .filter(receita => receita.data >= this.dataInicial && receita.data < this.dataFinal)
-            .filter((receita: Receita) => receita.tipoRenda === renda)
-            .map(receita => receita.valor)
-            .reduce((acumulador, valorCorrente) => acumulador + valorCorrente, 0);
-        this.dados[responsavel.id].receitas[0].push(total);
-      });
-    });
+    for (const responsavel of responsaveis) {
+      for (const renda of this.keys(TipoRendaEnum)) {
+        const receitasFiltradas = await this.transacaoService.obterTodasReceitas(responsavel,
+          null, this.dataInicial, this.dataFinal, TipoRendaEnum[renda]);
+        this.dados[responsavel.id].receitas[0].push(this.somarValorDasTransacaoes(receitasFiltradas));
+      }
+    }
+
     if (todosResponsaveis.length > 1) {
       this.keys(CategoriaDespesaEnum).forEach((categoria, index) => {
         this.dados[0].receitas[0][index] = 0;
@@ -142,6 +130,11 @@ export class HomeComponent implements OnInit {
         });
       });
     }
+  }
+
+  somarValorDasTransacaoes(transacoes: Transacao[]): number {
+    return transacoes.map(transacao => transacao.valor)
+                      .reduce((acumulador, valorCorrente) => acumulador + valorCorrente, 0);
   }
 
   diminuirMes() {

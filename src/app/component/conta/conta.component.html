@@ -4,10 +4,10 @@
 
       <div class="mat-elevation-z8">
 
-        <table mat-table [dataSource]="dataSource" matSort matSortActive="data" matSortDirection="desc">
+        <table mat-table [dataSource]="dataSource" multiTemplateDataRows matSort matSortActive="data" matSortDirection="desc">
 
           <ng-container matColumnDef="id">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header> Id </th>
             <td mat-cell *matCellDef="let conta"> {{ conta.id }} </td>
           </ng-container>
 
@@ -31,9 +31,27 @@
             <td mat-cell *matCellDef="let conta" > {{ conta.tipoConta }} </td>
           </ng-container>
 
+          <ng-container matColumnDef="expandirDetalhes">
+            <td mat-cell *matCellDef="let conta" [attr.colspan]="5">
+              <div class="detalhes" [@detailExpand]="conta === expandedElement ? 'expanded' : 'collapsed'">
+                <h3 class="historico"> Histórico </h3>
+                <table class="meses" style="width:20%">
+                  <tr *ngFor="let mes of keys(meses) | slice:0:12;" [style.color]="mesAtual(mes)">
+                    <th class="mes">  {{ meses[mes] }}: </th>
+                    <th class="valor"> {{ totalEmMeses[mes] | currencyFormat }} </th> 
+                  </tr>
+                </table>
+              </div>
+            </td>
+          </ng-container>
+
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let transacao; columns: displayedColumns;">
+          <tr mat-row *matRowDef="let conta; columns: displayedColumns;"
+            class="linha-fechada"
+            [class.linha-expandida]="expandedElement === conta"
+            (click)="expandirConta(conta)">
           </tr>
+          <tr mat-row *matRowDef="let conta; columns: ['expandirDetalhes']" class="linha-detalhes"></tr>
         </table>
         <button class="lado" mat-fab color="primary"  (click)="adicionarConta()"> <mat-icon>add</mat-icon></button>
 
