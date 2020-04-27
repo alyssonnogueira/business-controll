@@ -102,12 +102,12 @@ export class ContaComponent implements OnInit {
       const totalReceitas = await this.transacaoService.obterTodasReceitas(null, conta, dataInicial, dataFinal)
         .then(receitas => this.somarValorDasTransacaoes(receitas));
       const totalTransferenciasRecebidas = await this.transacaoService.obterTodasTransferencias(null, null, dataInicial, dataFinal, conta)
-        .then(receitas => this.somarValorDasTransacaoes(receitas));
+        .then(transferencias => this.somarValorDasTransacaoes(transferencias));
       const totalTransferenciasRealizadas = await this.transacaoService.obterTodasTransferencias(null, conta, dataInicial, dataFinal)
-        .then(receitas => this.somarValorDasTransacaoes(receitas));
+        .then(transferencias => this.somarValorDasTransacaoes(transferencias));
       const saldoMesAnterior = mesEmNumero > 0 ? this.totalEmMeses[mesEmNumero - 1] :
                                                  (await this.saldoAnoAnterior(conta, anoAtual));
-      console.log("SaldoOriginal:" + (conta.saldo + (totalReceitas + totalTransferenciasRecebidas - totalDespesas - totalTransferenciasRealizadas) * -1));
+
       this.totalEmMeses[mes] += saldoMesAnterior + totalReceitas + totalTransferenciasRecebidas
                                                         - totalDespesas - totalTransferenciasRealizadas;
     }
