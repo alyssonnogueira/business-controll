@@ -45,6 +45,24 @@
             </td>
           </ng-container>
 
+          <ng-container matColumnDef="edit">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let conta">
+              <button matTooltip="Editar" mat-icon-button (click)="editarConta(conta)">
+                <mat-icon>edit</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+      
+          <ng-container matColumnDef="delete">
+            <th mat-header-cell *matHeaderCellDef></th>
+            <td mat-cell *matCellDef="let conta">
+              <button matTooltip="Remover" mat-icon-button (click)="desativarConta(conta)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let conta; columns: displayedColumns;"
             class="linha-fechada"

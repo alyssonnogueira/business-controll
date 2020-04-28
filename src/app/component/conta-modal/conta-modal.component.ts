@@ -24,8 +24,13 @@ export class ContaModalComponent implements OnInit {
     this.dialogRef.close();
   }
 
+  get isEdicao(): boolean {
+    return this.data.id != null;
+  }
+
   onSave(): void {
-    this.dialogRef.close(Conta.jsonToConta(this.data));
+    const contaEditada = this.isEdicao ? this.data : Conta.jsonToConta(this.data);
+    this.dialogRef.close(contaEditada);
   }
 
   ngOnInit() {
