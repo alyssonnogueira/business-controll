@@ -25,7 +25,7 @@ import { Transacao } from 'src/app/model/transacao';
 })
 export class ContaComponent implements OnInit {
 
-  displayedColumns: string[] = ['id', 'nome', 'saldo', 'responsavel', 'tipoConta'];
+  displayedColumns: string[] = ['id', 'nome', 'saldo', 'responsavel', 'tipoConta', 'edit', 'delete'];
   dataSource: MatTableDataSource<Conta>;
   expandedElement: Conta | null;
   public currencyFormat = new CurrencyFormatPipe('pt-BR');
@@ -68,6 +68,22 @@ export class ContaComponent implements OnInit {
       this.contaService.salvarConta(result);
       this.atualizarDataSource();
     });
+  }
+
+  editarConta(conta: Conta) {
+    const dialogRef = this.dialog.open(ContaModalComponent, {
+      width: '800px',
+      data: conta
+    });
+
+    dialogRef.afterClosed().subscribe(contaEditada => {
+      return contaEditada ? this.contaService.atualizarConta(contaEditada).finally(() => this.atualizarDataSource()) : null;
+    });
+  }
+
+  desativarConta(conta: Conta) {
+    this.contaService.desativarConta(conta)
+      .finally(() => this.atualizarDataSource());
   }
 
   atualizarDataSource() {

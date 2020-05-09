@@ -34,12 +34,32 @@ export class TransacaoModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<TransacaoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Transacao,
-    private responsavelService: ResponsavelService,
-    private contaService: ContaService,
-    private snackBar: MatSnackBar) { }
+    protected responsavelService: ResponsavelService,
+    protected contaService: ContaService,
+    private snackBar: MatSnackBar) {
+      this.responsavelService.obterTodosResponsaveis().then(responsaveis => this.responsaveis = responsaveis);
+  }
+
+  ngOnInit() {
+    if (this.data.id) {
+      if (this.data.tipoTransacao === TipoTransacaoEnum.DESPESA) {
+        this.tipoTransacao = 'DESPESA';
+        const despesa = this.data as Despesa;
+        despesa.categoria = this.categoriaEnum[despesa.categoria];
+      } else if ('tipoRenda' in this.data) {
+        this.tipoTransacao = 'RECEITA';
+        const receita = this.data as Receita;
+        receita.tipoRenda = this.tipoRendaEnum[receita.tipoRenda];
+      } else if ('contaDestino' in this.data) {
+        this.tipoTransacao = 'TRANSFERENCIA';
+      }
+    } else {
+      this.data.data = new Date();
+    }
+  }
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.dialogRef.close(null);
   }
 
   onSave(): void {
@@ -54,25 +74,6 @@ export class TransacaoModalComponent implements OnInit {
     if (this.isTranferencia && this.validarTransferencia(this.data as Transferencia)) {
       this.dialogRef.close(Transferencia.jsonToTransferencia(this.data));
     }
-  }
-
-  ngOnInit() {
-    if (this.data.id) {
-      if ('categoria' in this.data) {
-        this.tipoTransacao = 'DESPESA';
-        const despesa = this.data as Despesa;
-        despesa.categoria = this.categoriaEnum[despesa.categoria];
-      } else if ('tipoRenda' in this.data) {
-        this.tipoTransacao = 'RECEITA';
-        const receita = this.data as Receita;
-        receita.tipoRenda = this.tipoRendaEnum[receita.tipoRenda];
-      } else if ('contaDestino' in this.data) {
-        this.tipoTransacao = 'TRANSFERENCIA';
-      }
-    } else {
-      this.data.data = new Date();
-    }
-    this.responsavelService.obterTodosResponsaveis().then(responsaveis => this.responsaveis = responsaveis);
   }
 
   obterContas() {

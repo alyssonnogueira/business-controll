@@ -1,3 +1,4 @@
+import { Responsavel } from './../../model/responsavel';
 import { TipoContaEnum } from '../../model/tipo-conta.enum';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
@@ -18,17 +19,23 @@ export class ContaModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ContaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Conta,
-    private responsavelService: ResponsavelService) { }
-
-  onCancel(): void {
-    this.dialogRef.close();
-  }
-
-  onSave(): void {
-    this.dialogRef.close(Conta.jsonToConta(this.data));
-  }
+    protected responsavelService: ResponsavelService) { }
 
   ngOnInit() {
     this.responsavelService.obterTodosResponsaveis().then(responsaveis => this.responsaveis = responsaveis);
   }
+
+  onCancel(): void {
+    this.dialogRef.close(null);
+  }
+
+  get isEdicao(): boolean {
+    return this.data.id != null;
+  }
+
+  onSave(): void {
+    const contaEditada = this.isEdicao ? this.data : Conta.jsonToConta(this.data);
+    this.dialogRef.close(contaEditada);
+  }
+
 }

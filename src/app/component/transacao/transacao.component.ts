@@ -66,8 +66,8 @@ export class TransacaoComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(novaTransacao => {
-      this.transacaoService.editarTransacao(transacao, novaTransacao)
-      .finally(() => this.atualizarDataSource());
+      return novaTransacao ? this.transacaoService.editarTransacao(transacao, novaTransacao)
+      .finally(() => this.atualizarDataSource()) : null;
     });
   }
 

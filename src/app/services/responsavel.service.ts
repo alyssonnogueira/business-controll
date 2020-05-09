@@ -26,6 +26,10 @@ export class ResponsavelService {
     this.dbService.add(this.key, responsavel);
   }
 
+  responsaveisSaoIguais(responsavel1: Responsavel, responsavel2: Responsavel): boolean {
+    return responsavel1 && responsavel2 ? responsavel1.id === responsavel2.id : responsavel1 === responsavel2;
+  }
+
   async mockData() {
     const transacoes = await this.obterTodosResponsaveis();
     if (transacoes == null || transacoes.length === 0) {

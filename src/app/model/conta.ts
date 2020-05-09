@@ -8,6 +8,7 @@ export class Conta {
     responsavel: Responsavel;
     tipoConta: TipoContaEnum;
     dataCriacao: Date;
+    dataExclusao: Date = null;
 
     constructor(nome: string, saldoOriginal: number, responsavel: Responsavel, tipoConta: TipoContaEnum) {
         this.nome = nome;

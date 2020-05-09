@@ -16,7 +16,7 @@ export class IndexedDBConfigService implements DBConfig {
 
   constructor() {
     this.name = 'BusinessControll';
-    this.version = 2;
+    this.version = 3;
     this.migrationFactory = migrationFactory;
   }
 
@@ -76,6 +76,11 @@ export function migrationFactory() {
           store.put(conta);
         });
       };
+      return;
+    },
+    3: (db: IDBDatabase, transaction: IDBTransaction) => {
+      const store = transaction.objectStore('conta');
+      store.createIndex('dataExclusao', 'dataExclusao', { unique: false });
       return;
     }
   };

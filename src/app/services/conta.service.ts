@@ -1,13 +1,10 @@
 import { Transferencia } from './../model/transferencia';
-import { Receita } from './../model/receita';
-import { Despesa } from './../model/despesa';
 import { ResponsavelService } from './responsavel.service';
 import { Injectable } from '@angular/core';
 import { Conta } from '../model/conta';
 import { TipoContaEnum } from '../model/tipo-conta.enum';
 import { Transacao } from '../model/transacao';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { Responsavel } from '../model/responsavel';
 import { TipoTransacaoEnum } from '../model/tipo-transacao.enum';
 
 @Injectable({
@@ -26,12 +23,20 @@ export class ContaService {
   }
 
   obterTodasContas(): Promise<Conta[]> {
-    return this.dbService.getAll(this.key);
+    return this.dbService.getAll(this.key).then(this.filtrarContasDesativadas);
   }
 
   async obterContaPorIdResponsavel(idResponsavel: number): Promise<Conta[]> {
     const contas = await this.obterTodasContas();
-    return contas.filter(conta => conta.responsavel.id === idResponsavel);
+    return this.filtrarContasDesativadas(contas.filter(conta => conta.responsavel.id === idResponsavel));
+  }
+
+  contasSaoIguais(conta1: Conta, conta2: Conta): boolean {
+    return conta1 && conta2 ? conta1.id === conta2.id : conta1 === conta2;
+  }
+
+  filtrarContasDesativadas(contas: Conta[]): Conta[] {
+    return contas.filter((conta: Conta) => conta.dataExclusao == null );
   }
 
   salvarConta(conta: Conta): void {
@@ -40,6 +45,11 @@ export class ContaService {
 
   atualizarConta(conta: Conta): Promise<Conta> {
     return this.dbService.update(this.key, conta);
+  }
+
+  desativarConta(conta: Conta): Promise<Conta> {
+    conta.dataExclusao = new Date();
+    return this.atualizarConta(conta);
   }
 
   async alterarSaldoConta(transacao: Transacao) {
