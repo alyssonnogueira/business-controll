@@ -77,14 +77,13 @@ export class ContaComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(contaEditada => {
-      console.log(contaEditada);
-      this.contaService.atualizarConta(contaEditada).finally(() => this.atualizarDataSource());
+      return contaEditada ? this.contaService.atualizarConta(contaEditada).finally(() => this.atualizarDataSource()) : null;
     });
   }
 
   desativarConta(conta: Conta) {
-    // this.transacaoService.desfazerTransacao(transacao);
-    // this.atualizarDataSource();
+    this.contaService.desativarConta(conta)
+      .finally(() => this.atualizarDataSource());
   }
 
   atualizarDataSource() {

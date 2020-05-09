@@ -9,7 +9,7 @@
         <input type="text" matInput currencyMask placeholder="0,00" [(ngModel)]="data.saldoOriginal" [disabled]="isEdicao">
         <span matPrefix>R$&nbsp;</span>
     </mat-form-field>
-    <mat-select placeholder="Selecione o Responsavel" [(ngModel)]="data.responsavel" [(value)]="data.responsavel" [disabled]="isEdicao" required>
+    <mat-select placeholder="Selecione o Responsavel" [compareWith]="responsavelService.responsaveisSaoIguais" [(ngModel)]="data.responsavel" [(value)]="data.responsavel" [disabled]="isEdicao" required>
         <mat-option *ngFor="let responsavel of responsaveis; let idx = index" [value]=responsavel>{{responsavel.nome}}</mat-option>
     </mat-select>
     <mat-select placeholder="Selecione o Tipo de Conta" [(ngModel)]="data.tipoConta" [(value)]="data.tipoConta" [disabled]="isEdicao" required>
