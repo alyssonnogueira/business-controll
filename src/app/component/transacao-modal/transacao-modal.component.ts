@@ -53,6 +53,7 @@ export class TransacaoModalComponent implements OnInit {
       } else if ('contaDestino' in this.data) {
         this.tipoTransacao = 'TRANSFERENCIA';
       }
+      this.obterContas();
     } else {
       this.data.data = new Date();
     }
@@ -79,6 +80,14 @@ export class TransacaoModalComponent implements OnInit {
   obterContas() {
     return this.data.responsavel != null ?
       this.contaService.obterContaPorIdResponsavel(this.data.responsavel.id).then(contas => this.contas = contas) : [];
+  }
+
+  categoriasSaoIguais(categoria1: string, categoria2: string): boolean {
+    return categoria1 && categoria2 ? CategoriaDespesaEnum[categoria1] === categoria2 : categoria1 === categoria2;
+  }
+
+  receitasSaoIguais(receita1: string, receita2: string): boolean {
+    return receita1 && receita2 ? TipoRendaEnum[receita1] === receita2 : receita1 === receita2;
   }
 
   get isDespesa(): boolean {

@@ -20,7 +20,7 @@ import { Transacao } from 'src/app/model/transacao';
 })
 export class HomeComponent implements OnInit {
 
-  responsaveis = [{id: 0, nome: 'Geral'}];
+  responsaveis = [{id: 0, nome: 'Geral', dataExclusao: null}];
   colunas = ['Despesas', 'Receitas', 'Cartão de Crédito'];
   categoriaEnum = [];
   rendaEnum = [];

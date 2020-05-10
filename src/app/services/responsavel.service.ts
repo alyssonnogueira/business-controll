@@ -1,5 +1,5 @@
+import { Responsavel } from './../model/responsavel';
 import { Injectable } from '@angular/core';
-import { Responsavel } from '../model/responsavel';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { Observable, pipe } from 'rxjs';
 
@@ -19,11 +19,24 @@ export class ResponsavelService {
   }
 
   obterTodosResponsaveis(): Promise<Responsavel[]> {
-    return this.dbService.getAll(this.key);
+    return this.dbService.getAll(this.key).then(this.filtrarResponsaveisDesativadas);
+  }
+
+  filtrarResponsaveisDesativadas(contas: Responsavel[]): Responsavel[] {
+    return contas.filter((conta: Responsavel) => conta.dataExclusao == null );
   }
 
   salvarResponsavel(responsavel: Responsavel) {
     this.dbService.add(this.key, responsavel);
+  }
+
+  atualizarResponsavel(responsavel: Responsavel): Promise<Responsavel> {
+    return this.dbService.update(this.key, responsavel);
+  }
+
+  desativarResponsavel(responsavel: Responsavel): Promise<Responsavel> {
+    responsavel.dataExclusao = new Date();
+    return this.atualizarResponsavel(responsavel);
   }
 
   responsaveisSaoIguais(responsavel1: Responsavel, responsavel2: Responsavel): boolean {
