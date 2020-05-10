@@ -16,7 +16,7 @@ export class IndexedDBConfigService implements DBConfig {
 
   constructor() {
     this.name = 'BusinessControll';
-    this.version = 3;
+    this.version = 4;
     this.migrationFactory = migrationFactory;
   }
 
@@ -27,6 +27,7 @@ export class IndexedDBConfigService implements DBConfig {
         storeConfig: { keyPath: 'id', autoIncrement: true },
         storeSchema: [
           { name: 'nome', keypath: 'nome', options: { unique: false } },
+          { name: 'dataExclusao', keypath: 'dataExclusao', options: { unique: false } },
         ]
       },
       {
@@ -38,6 +39,8 @@ export class IndexedDBConfigService implements DBConfig {
           { name: 'saldoOriginal', keypath: 'saldoOriginal', options: { unique: false } },
           { name: 'responsavel', keypath: 'responsavel', options: { unique: false } },
           { name: 'tipoConta', keypath: 'tipoConta', options: { unique: false } },
+          { name: 'dataCriacao', keypath: 'dataCriacao', options: { unique: false } },
+          { name: 'dataExclusao', keypath: 'dataExclusao', options: { unique: false } },
         ]
       }, {
         store: 'transacao',
@@ -54,6 +57,7 @@ export class IndexedDBConfigService implements DBConfig {
           { name: 'categoria', keypath: 'categoria', options: { unique: false } },
           // Transferencia
           { name: 'contaDestino', keypath: 'contaDestino', options: { unique: false } },
+          { name: 'tipoTransacao', keypath: 'tipoTransacao', options: { unique: false } },
         ]
       }
     ];
@@ -80,6 +84,11 @@ export function migrationFactory() {
     },
     3: (db: IDBDatabase, transaction: IDBTransaction) => {
       const store = transaction.objectStore('conta');
+      store.createIndex('dataExclusao', 'dataExclusao', { unique: false });
+      return;
+    },
+    4: (db: IDBDatabase, transaction: IDBTransaction) => {
+      const store = transaction.objectStore('responsavel');
       store.createIndex('dataExclusao', 'dataExclusao', { unique: false });
       return;
     }

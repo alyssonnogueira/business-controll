@@ -3,8 +3,6 @@ import { ResponsavelService } from './../../services/responsavel.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Responsavel } from 'src/app/model/responsavel';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
-import { ContaService } from 'src/app/services/conta.service';
-import { ContaModalComponent } from '../conta-modal/conta-modal.component';
 
 @Component({
   selector: 'app-responsavel',
@@ -13,7 +11,7 @@ import { ContaModalComponent } from '../conta-modal/conta-modal.component';
 })
 export class ResponsavelComponent implements OnInit {
 
-  displayedColumns: string[] = ['id', 'nome'];
+  displayedColumns: string[] = ['id', 'nome', 'edit', 'delete'];
   dataSource: MatTableDataSource<Responsavel>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -48,6 +46,23 @@ export class ResponsavelComponent implements OnInit {
       this.responsavelService.salvarResponsavel(result);
       this.atualizarDataSource();
     });
+  }
+
+  editarResponsavel(responsavel: Responsavel) {
+    const dialogRef = this.dialog.open(ResponsavelModalComponent, {
+      width: '400px',
+      data: responsavel
+    });
+
+    dialogRef.afterClosed().subscribe(responsavelEditada => {
+      return responsavelEditada ? this.responsavelService.atualizarResponsavel(responsavelEditada)
+        .finally(() => this.atualizarDataSource()) : null;
+    });
+  }
+
+  desativarResponsavel(responsavel: Responsavel) {
+    this.responsavelService.desativarResponsavel(responsavel)
+      .finally(() => this.atualizarDataSource());
   }
 
   atualizarDataSource() {
