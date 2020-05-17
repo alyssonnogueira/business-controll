@@ -2,7 +2,6 @@ import { TipoRendaEnum } from './../model/tipo-renda.enum';
 import { TipoTransacaoEnum } from './../model/tipo-transacao.enum';
 import { Despesa } from './../model/despesa';
 import { Conta } from './../model/conta';
-import { MesesEnum } from './../model/meses.enum';
 import { Transferencia } from './../model/transferencia';
 import { Receita } from './../model/receita';
 import { ContaService } from './conta.service';
@@ -39,35 +38,35 @@ export class TransacaoService {
     });
   }
 
-  obterTodasDespesas(responsavel?: Responsavel,
+  obterTodasDespesas(responsaveis?: Responsavel[],
                      conta?: Conta,
                      dataInicial?: Date,
                      dataFinal?: Date,
                      categoria?: CategoriaDespesaEnum,
                      isCredito?: boolean): Promise<Despesa[]> {
-    return this.obterTodasTransacoes([TipoTransacaoEnum.DESPESA], [responsavel], conta, dataInicial, dataFinal)
+    return this.obterTodasTransacoes([TipoTransacaoEnum.DESPESA], responsaveis, conta, dataInicial, dataFinal)
       .then((despesas: Despesa[]) =>
         despesas.filter(despesa => this.filtroCategoria(despesa, categoria) && this.filtroDebitoCredito(despesa, isCredito))
       );
   }
 
-  obterTodasReceitas(responsavel?: Responsavel,
+  obterTodasReceitas(responsaveis?: Responsavel[],
                      conta?: Conta,
                      dataInicial?: Date,
                      dataFinal?: Date,
                      renda?: TipoRendaEnum): Promise<Receita[]> {
-    return this.obterTodasTransacoes([TipoTransacaoEnum.RECEITA], [responsavel], conta, dataInicial, dataFinal)
+    return this.obterTodasTransacoes([TipoTransacaoEnum.RECEITA], responsaveis, conta, dataInicial, dataFinal)
       .then((receitas: Receita[]) =>
         receitas.filter(receita => renda ? TipoRendaEnum[receita.tipoRenda] === renda : true)
       );
   }
 
-  obterTodasTransferencias(responsavel?: Responsavel,
+  obterTodasTransferencias(responsaveis?: Responsavel[],
                            conta?: Conta,
                            dataInicial?: Date,
                            dataFinal?: Date,
                            contaDestino?: Conta): Promise<Transferencia[]> {
-    return this.obterTodasTransacoes([TipoTransacaoEnum.TRANSFERENCIA], [responsavel], conta, dataInicial, dataFinal)
+    return this.obterTodasTransacoes([TipoTransacaoEnum.TRANSFERENCIA], responsaveis, conta, dataInicial, dataFinal)
       .then((transferencias: Transferencia[]) =>
         transferencias.filter(transferencia => contaDestino ? transferencia.contaDestino.id === contaDestino.id : true)
       );
@@ -93,7 +92,9 @@ export class TransacaoService {
   }
 
   private filtroTipoTransacao(transacao: Transacao, tipoTransacoes: TipoTransacaoEnum[]) {
-    return tipoTransacoes ? tipoTransacoes.some(tipoTransacao => transacao.tipoTransacao === tipoTransacao) : true;
+    return tipoTransacoes && tipoTransacoes.length > 0 ?
+              tipoTransacoes.some(tipoTransacao => transacao.tipoTransacao === tipoTransacao) :
+              true;
   }
 
   private filtroConta(transacao: Transacao, conta: Conta) {
@@ -101,7 +102,7 @@ export class TransacaoService {
   }
 
   private filtroResponsavel(transacao: Transacao, responsaveis: Responsavel[]) {
-    return responsaveis ?
+    return responsaveis && responsaveis.length > 0 ?
               responsaveis.some(responsavel => transacao.responsavel.id === responsavel.id) :
               true;
   }

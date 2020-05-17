@@ -4,16 +4,12 @@ import { Despesa } from '../../model/despesa';
 import { ContaService } from '../../services/conta.service';
 import { ResponsavelService } from '../../services/responsavel.service';
 import { Component, OnInit, Inject } from '@angular/core';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
 import { Transacao } from '../../model/transacao';
 import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
-import { Responsavel } from '../../model/responsavel';
-import { Conta } from '../../model/conta';
 import { CategoriaDespesaEnum } from '../../model/categoria-despesa.enum';
 import { TipoRendaEnum } from '../../model/tipo-renda.enum';
 import {MatSnackBar} from '@angular/material';
-import { from, Observable, of } from 'rxjs';
-
 
 @Component({
   selector: 'app-transacao-modal',

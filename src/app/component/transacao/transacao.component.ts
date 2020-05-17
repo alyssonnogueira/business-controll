@@ -3,9 +3,6 @@ import { ResponsavelService } from './../../services/responsavel.service';
 import { CurrencyFormatPipe } from './../../pipes/currency-format.pipe';
 import { CategoriaDespesaEnum } from 'src/app/model/categoria-despesa.enum';
 import { TipoRendaEnum } from './../../model/tipo-renda.enum';
-import { Transferencia } from '../../model/transferencia';
-import { Receita } from '../../model/receita';
-import { Despesa } from '../../model/despesa';
 import { TransacaoService } from '../../services/transacao.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
@@ -13,7 +10,6 @@ import {Transacao} from '../../model/transacao';
 import { TransacaoModalComponent } from '../transacao-modal/transacao-modal.component';
 import {MatDialog } from '@angular/material/dialog';
 import { Responsavel } from 'src/app/model/responsavel';
-import { currentId } from 'async_hooks';
 
 @Component({
   selector: 'app-transacao',
