@@ -1,8 +1,9 @@
+import { TipoTransacaoEnum } from './../../model/tipo-transacao.enum';
+import { ResponsavelService } from './../../services/responsavel.service';
 import { CurrencyFormatPipe } from './../../pipes/currency-format.pipe';
 import { CategoriaDespesaEnum } from 'src/app/model/categoria-despesa.enum';
 import { TipoRendaEnum } from './../../model/tipo-renda.enum';
 import { Transferencia } from '../../model/transferencia';
-import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
 import { Receita } from '../../model/receita';
 import { Despesa } from '../../model/despesa';
 import { TransacaoService } from '../../services/transacao.service';
@@ -11,6 +12,8 @@ import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Transacao} from '../../model/transacao';
 import { TransacaoModalComponent } from '../transacao-modal/transacao-modal.component';
 import {MatDialog } from '@angular/material/dialog';
+import { Responsavel } from 'src/app/model/responsavel';
+import { currentId } from 'async_hooks';
 
 @Component({
   selector: 'app-transacao',
@@ -19,24 +22,38 @@ import {MatDialog } from '@angular/material/dialog';
 })
 export class TransacaoComponent implements OnInit {
 
-  displayedColumns: string[] = ['id', 'data', 'valor', 'descricao', 'categoria', 'responsavel', 'tipoPagamento', 'conta', 'edit', 'delete'];
+  displayedColumns: string[] = ['id', 'data', 'valor', 'descricao', 'categoria', 'responsavel', 'conta', 'edit', 'delete'];
   dataSource: MatTableDataSource<Transacao>;
+  responsaveis: Responsavel[] = [];
+  responsaveisFiltrados: Responsavel[] = [];
+  tipoTransacoes = Object.keys(TipoTransacaoEnum);
+  tipoTransacoesEnum = TipoTransacaoEnum;
+  tipoTransacoesFiltradas: TipoTransacaoEnum[] = [];
+  hoje = new Date();
+  dataInicial = new Date((this.hoje.getMonth() + 1) + '/01/' + this.hoje.getFullYear());
+  dataFinal = new Date((this.hoje.getMonth() + 2) + '/01/' + this.hoje.getFullYear());
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   public currencyFormat = new CurrencyFormatPipe('pt-BR');
 
-  constructor(private transacaoService: TransacaoService, public dialog: MatDialog ) {
+  constructor(private transacaoService: TransacaoService, public dialog: MatDialog,
+              protected responsavelService: ResponsavelService) {
   }
 
   ngOnInit() {
-    this.transacaoService.obterTodasTransacoes().then(transacoes => {
+    this.transacaoService.obterTodasTransacoes(null, null, null, this.dataInicial, this.dataFinal).then(transacoes => {
       this.dataSource = new MatTableDataSource(transacoes);
       this.dataSource.paginator = this.paginator;
       this.dataSource.paginator.pageSize = 10;
       this.dataSource.sort = this.sort;
     });
+    this.responsavelService.obterTodosResponsaveis().then(responsaveis =>  {
+      this.responsaveis = responsaveis;
+      this.responsaveisFiltrados = responsaveis.slice();
+    });
+    this.tipoTransacoes.forEach(tipoTransacao => this.tipoTransacoesFiltradas.push(TipoTransacaoEnum[tipoTransacao]));
   }
 
   applyFilter(filterValue: string) {
@@ -77,8 +94,10 @@ export class TransacaoComponent implements OnInit {
   }
 
   atualizarDataSource() {
-    this.transacaoService.obterTodasTransacoes().then(transacoes => {
-      this.dataSource.data = transacoes;
+    this.transacaoService.obterTodasTransacoes(
+      this.tipoTransacoesFiltradas, this.responsaveisFiltrados, null, this.dataInicial, this.dataFinal)
+      .then(transacoes => {
+        this.dataSource.data = transacoes;
     });
   }
 
@@ -100,5 +119,43 @@ export class TransacaoComponent implements OnInit {
       case TipoTransacaoEnum.TRANSFERENCIA: categoria = TipoTransacaoEnum.TRANSFERENCIA; break;
     }
     return categoria;
+  }
+
+  filtroResponsaveis(responsavel: Responsavel) {
+    const index = this.obterPosicaoResponsavelSelecionado(responsavel);
+    if (index === -1) {
+      this.responsaveisFiltrados.push(responsavel);
+    } else {
+      this.responsaveisFiltrados.splice(index, 1);
+    }
+    this.atualizarDataSource();
+  }
+
+  obterPosicaoResponsavelSelecionado(responsavel: Responsavel): number {
+    return this.responsaveisFiltrados.findIndex(responsavelFiltrado => {
+      return responsavelFiltrado.id === responsavel.id;
+    });
+  }
+
+  filtroTipoTransacoes(tipoTransacao: TipoTransacaoEnum) {
+    const index = this.tipoTransacoesFiltradas.findIndex(tipoTransacaoFiltrada => tipoTransacao === tipoTransacaoFiltrada);
+    if (index === -1) {
+      this.tipoTransacoesFiltradas.push(tipoTransacao);
+    } else {
+      this.tipoTransacoesFiltradas.splice(index, 1);
+    }
+    this.atualizarDataSource();
+  }
+
+  get valorTotal() {
+    return this.dataSource ? this.dataSource.filteredData.map(transacao => {
+      let valor = 0;
+      switch (transacao.tipoTransacao) {
+        case TipoTransacaoEnum.DESPESA: valor = transacao.valor * -1; break;
+        case TipoTransacaoEnum.RECEITA: valor = transacao.valor; break;
+        case TipoTransacaoEnum.TRANSFERENCIA: valor = 0; break;
+      }
+      return valor;
+    }).reduce((acumulador, valorCorrente) => acumulador + valorCorrente, 0) : 0;
   }
 }

@@ -1,6 +1,32 @@
 <mat-form-field class='filtro'>
-  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtro Descrição">
+  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar por Descrição/Categoria">
 </mat-form-field>
+
+<section class="filtro filtro-responsaveis-section">
+  <label for="mat-checkbox"> Responsáveis </label>
+  <mat-checkbox *ngFor="let responsavel of responsaveis" (click)="filtroResponsaveis(responsavel)" checked="checked"> 
+    {{ responsavel.nome }} 
+  </mat-checkbox>
+</section>
+
+<section class="filtro filtro-transacao-section">
+  <label for="section"> Tipos de Transação </label>
+  <mat-checkbox *ngFor="let tipoTransacao of tipoTransacoes" (click)="filtroTipoTransacoes(tipoTransacoesEnum[tipoTransacao])" checked="checked"> 
+    {{ tipoTransacoesEnum[tipoTransacao] }} 
+  </mat-checkbox>
+</section>
+
+<section class="filtro filtro-data-section">
+  <mat-label>Data Inicial</mat-label>
+  <input matInput [(ngModel)]="dataInicial" [matDatepicker]="pickerInicial" (dateChange)="atualizarDataSource()">
+  <mat-datepicker-toggle matSuffix [for]="pickerInicial"></mat-datepicker-toggle>
+  <mat-datepicker #pickerInicial></mat-datepicker>
+  <mat-label>Data Final</mat-label>
+  <input matInput [(ngModel)]="dataFinal" [matDatepicker]="pickerFinal" (dateChange)="atualizarDataSource()">
+  <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
+  <mat-datepicker #pickerFinal></mat-datepicker>
+</section>
+
 
 <div class="mat-elevation-z8">
 
@@ -9,41 +35,43 @@
     <ng-container matColumnDef="id">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
       <td mat-cell *matCellDef="let transacao"> {{transacao.id}} </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="data">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Data </th>
       <td mat-cell *matCellDef="let transacao"> {{transacao.data | date: 'dd/MM/yyyy'}} </td>
+      <td mat-footer-cell *matFooterCellDef> Total </td>
     </ng-container>
 
     <ng-container matColumnDef="valor">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
       <td mat-cell *matCellDef="let transacao" [ngClass]="obterClasseTransacao(transacao)"> {{transacao.valor | currencyFormat}} </td>
+      <td mat-footer-cell *matFooterCellDef> {{ valorTotal | currencyFormat}} </td>
     </ng-container>
 
     <ng-container matColumnDef="descricao">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
       <td mat-cell *matCellDef="let transacao" > {{transacao.descricao}} </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="categoria">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> Categoria </th>
         <td mat-cell *matCellDef="let transacao" > {{ obterCategoria(transacao)}} </td>
-      </ng-container>
+        <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
 
     <ng-container matColumnDef="responsavel">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Responsável </th>
       <td mat-cell *matCellDef="let transacao" > {{transacao.responsavel.nome}} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="tipoPagamento">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Pagamento </th>
-      <td mat-cell *matCellDef="let transacao" > {{transacao.conta.tipoConta}} </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="conta">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Conta </th>
       <td mat-cell *matCellDef="let transacao" > {{transacao.conta.nome}} </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="edit">
@@ -53,6 +81,7 @@
           <mat-icon>edit</mat-icon>
         </button>
       </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="delete">
@@ -62,11 +91,13 @@
           <mat-icon>delete</mat-icon>
         </button>
       </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let transacao; columns: displayedColumns;">
-    </tr>
+    <tr mat-row *matRowDef="let transacao; columns: displayedColumns;"></tr>
+    <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
+    <!-- <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr> -->
   </table>
   <button class="lado" mat-fab color="primary"  (click)="adicionarTransacao()"> <mat-icon>add</mat-icon></button>
 
