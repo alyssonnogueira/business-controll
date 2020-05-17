@@ -1,32 +1,42 @@
-<mat-form-field class='filtro'>
-  <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar por Descrição/Categoria">
-</mat-form-field>
-
-<section class="filtro filtro-responsaveis-section">
-  <label for="mat-checkbox"> Responsáveis </label>
-  <mat-checkbox *ngFor="let responsavel of responsaveis" (click)="filtroResponsaveis(responsavel)" checked="checked"> 
-    {{ responsavel.nome }} 
-  </mat-checkbox>
-</section>
-
-<section class="filtro filtro-transacao-section">
-  <label for="section"> Tipos de Transação </label>
-  <mat-checkbox *ngFor="let tipoTransacao of tipoTransacoes" (click)="filtroTipoTransacoes(tipoTransacoesEnum[tipoTransacao])" checked="checked"> 
-    {{ tipoTransacoesEnum[tipoTransacao] }} 
-  </mat-checkbox>
-</section>
-
-<section class="filtro filtro-data-section">
-  <mat-label>Data Inicial</mat-label>
-  <input matInput [(ngModel)]="dataInicial" [matDatepicker]="pickerInicial" (dateChange)="atualizarDataSource()">
-  <mat-datepicker-toggle matSuffix [for]="pickerInicial"></mat-datepicker-toggle>
-  <mat-datepicker #pickerInicial></mat-datepicker>
-  <mat-label>Data Final</mat-label>
-  <input matInput [(ngModel)]="dataFinal" [matDatepicker]="pickerFinal" (dateChange)="atualizarDataSource()">
-  <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
-  <mat-datepicker #pickerFinal></mat-datepicker>
-</section>
-
+<mat-card class="mat-elevation-z8">
+  <mat-grid-list cols="5" rowHeight="150px">
+    <mat-grid-tile [colspan]="2" [rowspan]="1">
+      <mat-form-field class='filtro'>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar por Descrição/Categoria">
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+      <section class="filtro filtro-responsaveis-section">
+        <label for="mat-checkbox"> Responsáveis </label>
+          <mat-checkbox class="responsavel-checkbox" *ngFor="let responsavel of responsaveis" (click)="filtroResponsaveis(responsavel)" checked="checked"> 
+            {{ responsavel.nome }} 
+          </mat-checkbox>
+      </section>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+      <section class="filtro filtro-transacao-section">
+        <label for="section"> Tipos de Transação </label>
+        <mat-checkbox class="tipo-transacao-checkbox" *ngFor="let tipoTransacao of tipoTransacoes" (click)="filtroTipoTransacoes(tipoTransacoesEnum[tipoTransacao])" checked="checked"> 
+          {{ tipoTransacoesEnum[tipoTransacao] }} 
+        </mat-checkbox>
+      </section>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+      <div class="filtro-data-section">
+        <mat-form-field class="filtro-data-section">
+          <input matInput placeholder="Data inicial" [(ngModel)]="dataInicial" [matDatepicker]="pickerInicial" (dateChange)="atualizarDataSource()">
+          <mat-datepicker-toggle matSuffix [for]="pickerInicial"></mat-datepicker-toggle>
+          <mat-datepicker #pickerInicial></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field class="filtro-data-section">
+          <input matInput placeholder="Data final" [(ngModel)]="dataFinal" [matDatepicker]="pickerFinal" (dateChange)="atualizarDataSource()">
+          <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
+          <mat-datepicker #pickerFinal></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </mat-grid-tile>
+  </mat-grid-list>
+</mat-card>
 
 <div class="mat-elevation-z8">
 
