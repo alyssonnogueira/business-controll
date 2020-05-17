@@ -7,7 +7,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { Conta } from '../../model/conta';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { filter } from 'minimatch';
 import { Transacao } from 'src/app/model/transacao';
 
 @Component({
@@ -138,11 +137,11 @@ export class ContaComponent implements OnInit {
   async saldoAnoAnterior(conta: Conta, ano: number): Promise<number> {
     const dataFinal = new Date('01/01' + ano);
     const saldoInicial = conta.dataCriacao < dataFinal ? conta.saldoOriginal : 0;
-    const totalDespesas = await this.transacaoService.obterTodasDespesas(conta)
+    const totalDespesas = await this.transacaoService.obterTodasDespesas(null, conta)
     .then(despesas => this.somarValorDasTransacaoes(despesas.filter(despesa => despesa.data < dataFinal)));
-    const totalReceitas = await this.transacaoService.obterTodasReceitas(conta)
+    const totalReceitas = await this.transacaoService.obterTodasReceitas(null, conta)
       .then(receitas => this.somarValorDasTransacaoes(receitas.filter(receita => receita.data < dataFinal)));
-    const totalTransferenciasRecebidas = await this.transacaoService.obterTodasTransferencias(conta)
+    const totalTransferenciasRecebidas = await this.transacaoService.obterTodasTransferencias(null, conta)
       .then(transferencias => this.somarValorDasTransacaoes(transferencias.filter(transferencia => transferencia.data < dataFinal)));
     const totalTransferenciasRealizadas = await this.transacaoService.obterTodasTransferencias(null, null, null, null, conta)
       .then(transferencias => this.somarValorDasTransacaoes(transferencias.filter(transferencia => transferencia.data < dataFinal)));

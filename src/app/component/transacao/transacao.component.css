@@ -34,3 +34,14 @@ tr:hover{
 .mat-column-delete{
   max-width: 20px;
 }
+
+.filtro-responsaveis-section,
+.filtro-transacao-section,
+.filtro-data-section {
+  display: block;
+}
+
+.tipo-transacao-checkbox,
+.responsavel-checkbox {
+  display: block;
+}
