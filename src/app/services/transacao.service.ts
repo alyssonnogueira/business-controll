@@ -27,12 +27,12 @@ export class TransacaoService {
 
   obterTodasTransacoes(tipoTransacoes?: TipoTransacaoEnum[],
                        responsaveis?: Responsavel[],
-                       conta?: Conta,
+                       contas?: Conta[],
                        dataInicial?: Date,
                        dataFinal?: Date): Promise<Transacao[]> {
     return this.dbService.getAll(this.key).then((transacoes: Transacao[]) => {
       return transacoes.filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes)
-                                            && this.filtroConta(transacao, conta)
+                                            && this.filtroConta(transacao, contas)
                                             && this.filtroResponsavel(transacao, responsaveis)
                                             && this.filtroData(transacao, dataInicial, dataFinal));
     });
@@ -44,7 +44,7 @@ export class TransacaoService {
                      dataFinal?: Date,
                      categoria?: CategoriaDespesaEnum,
                      isCredito?: boolean): Promise<Despesa[]> {
-    return this.obterTodasTransacoes([TipoTransacaoEnum.DESPESA], responsaveis, conta, dataInicial, dataFinal)
+    return this.obterTodasTransacoes([TipoTransacaoEnum.DESPESA], responsaveis, [conta], dataInicial, dataFinal)
       .then((despesas: Despesa[]) =>
         despesas.filter(despesa => this.filtroCategoria(despesa, categoria) && this.filtroDebitoCredito(despesa, isCredito))
       );
@@ -55,7 +55,7 @@ export class TransacaoService {
                      dataInicial?: Date,
                      dataFinal?: Date,
                      renda?: TipoRendaEnum): Promise<Receita[]> {
-    return this.obterTodasTransacoes([TipoTransacaoEnum.RECEITA], responsaveis, conta, dataInicial, dataFinal)
+    return this.obterTodasTransacoes([TipoTransacaoEnum.RECEITA], responsaveis,[conta], dataInicial, dataFinal)
       .then((receitas: Receita[]) =>
         receitas.filter(receita => renda ? TipoRendaEnum[receita.tipoRenda] === renda : true)
       );
@@ -66,7 +66,7 @@ export class TransacaoService {
                            dataInicial?: Date,
                            dataFinal?: Date,
                            contaDestino?: Conta): Promise<Transferencia[]> {
-    return this.obterTodasTransacoes([TipoTransacaoEnum.TRANSFERENCIA], responsaveis, conta, dataInicial, dataFinal)
+    return this.obterTodasTransacoes([TipoTransacaoEnum.TRANSFERENCIA], responsaveis, [conta], dataInicial, dataFinal)
       .then((transferencias: Transferencia[]) =>
         transferencias.filter(transferencia => contaDestino ? transferencia.contaDestino.id === contaDestino.id : true)
       );
@@ -97,8 +97,9 @@ export class TransacaoService {
               true;
   }
 
-  private filtroConta(transacao: Transacao, conta: Conta) {
-    return conta ? transacao.conta.id === conta.id : true;
+  private filtroConta(transacao: Transacao, contas: Conta[]) {
+    return contas && contas.length > 0 ?
+            contas.some(conta => transacao.conta.id === conta.id) : true;
   }
 
   private filtroResponsavel(transacao: Transacao, responsaveis: Responsavel[]) {
