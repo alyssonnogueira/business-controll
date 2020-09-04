@@ -1,25 +1,39 @@
 <mat-card class="mat-elevation-z8">
   <mat-grid-list cols="5" rowHeight="150px">
-    <mat-grid-tile [colspan]="2" [rowspan]="1">
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
       <mat-form-field class='filtro'>
-        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filtrar por Descrição/Categoria">
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Descrição/Categoria">
       </mat-form-field>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1">
-      <section class="filtro filtro-responsaveis-section">
-        <label for="mat-checkbox"> Responsáveis </label>
-          <mat-checkbox class="responsavel-checkbox" *ngFor="let responsavel of responsaveis" (click)="filtroResponsaveis(responsavel)" checked="checked"> 
-            {{ responsavel.nome }} 
-          </mat-checkbox>
-      </section>
+      <mat-form-field class="filtro filtro-transacao-section" appearance="fill">
+        <mat-label>Responsáveis</mat-label>
+        <mat-select multiple [(ngModel)]="responsaveisFiltrados">
+          <mat-option *ngFor="let responsavel of responsaveis" (click)="atualizarResponsaveisEContas()" [value]="responsavel">
+            {{ responsavel.nome }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1">
-      <section class="filtro filtro-transacao-section">
-        <label for="section"> Tipos de Transação </label>
-        <mat-checkbox class="tipo-transacao-checkbox" *ngFor="let tipoTransacao of tipoTransacoes" (click)="filtroTipoTransacoes(tipoTransacoesEnum[tipoTransacao])" checked="checked"> 
-          {{ tipoTransacoesEnum[tipoTransacao] }} 
-        </mat-checkbox>
-      </section>
+      <mat-form-field class="filtro filtro-transacao-section" appearance="fill">
+        <mat-label>Tipos de Transação</mat-label>
+        <mat-select multiple [(ngModel)]="tipoTransacoesFiltradas">
+          <mat-option *ngFor="let tipoTransacao of tipoTransacoes" (click)="atualizarDataSource()" [value]="tipoTransacoesEnum[tipoTransacao]">
+            {{ tipoTransacoesEnum[tipoTransacao] }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </mat-grid-tile>
+    <mat-grid-tile [colspan]="1" [rowspan]="1">
+      <mat-form-field class="filtro filtro-transacao-section" appearance="fill">
+        <mat-label>Contas</mat-label>
+        <mat-select multiple [(ngModel)]="contasFiltrados">
+          <mat-option *ngFor="let conta of contas" (click)="atualizarDataSource()" [value]="conta">
+            {{ conta.nome }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </mat-grid-tile>
     <mat-grid-tile [colspan]="1" [rowspan]="1">
       <div class="filtro-data-section">
