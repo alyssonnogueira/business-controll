@@ -1,17 +1,17 @@
-import { TipoRendaEnum } from './../model/tipo-renda.enum';
-import { TipoTransacaoEnum } from './../model/tipo-transacao.enum';
-import { Despesa } from './../model/despesa';
-import { Conta } from './../model/conta';
-import { Transferencia } from './../model/transferencia';
-import { Receita } from './../model/receita';
-import { ContaService } from './conta.service';
-import { ResponsavelService } from './responsavel.service';
-import { Injectable } from '@angular/core';
+import {TipoRendaEnum} from './../model/tipo-renda.enum';
+import {TipoTransacaoEnum} from './../model/tipo-transacao.enum';
+import {Despesa} from './../model/despesa';
+import {Conta} from './../model/conta';
+import {Transferencia} from './../model/transferencia';
+import {Receita} from './../model/receita';
+import {ContaService} from './conta.service';
+import {ResponsavelService} from './responsavel.service';
+import {Injectable} from '@angular/core';
 import {Transacao} from '../model/transacao';
-import { CategoriaDespesaEnum } from '../model/categoria-despesa.enum';
+import {CategoriaDespesaEnum} from '../model/categoria-despesa.enum';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
-import { Responsavel } from '../model/responsavel';
-import { TipoContaEnum } from '../model/tipo-conta.enum';
+import {Responsavel} from '../model/responsavel';
+import {TipoContaEnum} from '../model/tipo-conta.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -31,10 +31,11 @@ export class TransacaoService {
                        dataInicial?: Date,
                        dataFinal?: Date): Promise<Transacao[]> {
     return this.dbService.getAll(this.key).then((transacoes: Transacao[]) => {
-      return transacoes.filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes)
-                                            && this.filtroConta(transacao, contas)
-                                            && this.filtroResponsavel(transacao, responsaveis)
-                                            && this.filtroData(transacao, dataInicial, dataFinal));
+      return transacoes
+        .filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes))
+        .filter(transacao => this.filtroConta(transacao, contas))
+        .filter(transacao => this.filtroResponsavel(transacao, responsaveis))
+        .filter(transacao => this.filtroData(transacao, dataInicial, dataFinal));
     });
   }
 
@@ -55,7 +56,7 @@ export class TransacaoService {
                      dataInicial?: Date,
                      dataFinal?: Date,
                      renda?: TipoRendaEnum): Promise<Receita[]> {
-    return this.obterTodasTransacoes([TipoTransacaoEnum.RECEITA], responsaveis,[conta], dataInicial, dataFinal)
+    return this.obterTodasTransacoes([TipoTransacaoEnum.RECEITA], responsaveis, [conta], dataInicial, dataFinal)
       .then((receitas: Receita[]) =>
         receitas.filter(receita => renda ? TipoRendaEnum[receita.tipoRenda] === renda : true)
       );
@@ -93,39 +94,39 @@ export class TransacaoService {
 
   private filtroTipoTransacao(transacao: Transacao, tipoTransacoes: TipoTransacaoEnum[]) {
     return tipoTransacoes && tipoTransacoes.length > 0 ?
-              tipoTransacoes.some(tipoTransacao => transacao.tipoTransacao === tipoTransacao) :
-              true;
+      tipoTransacoes.some(tipoTransacao => transacao.tipoTransacao === tipoTransacao) :
+      true;
   }
 
   private filtroConta(transacao: Transacao, contas: Conta[]) {
     return contas && contas.length > 0 ?
-            contas.some(conta => transacao.conta.id === conta.id) : true;
+      contas.some(conta => conta && (transacao.conta.id === conta.id)) : true;
   }
 
   private filtroResponsavel(transacao: Transacao, responsaveis: Responsavel[]) {
     return responsaveis && responsaveis.length > 0 ?
-              responsaveis.some(responsavel => transacao.responsavel.id === responsavel.id) :
-              true;
+      responsaveis.some(responsavel => transacao.responsavel.id === responsavel.id) :
+      true;
   }
 
   private filtroDebitoCredito(transacao: Transacao, isCredito: boolean) {
     return isCredito != null ? (isCredito ?
-                            transacao.conta.tipoConta === TipoContaEnum.CREDITO :
-                            transacao.conta.tipoConta === TipoContaEnum.DEBITO
-                          ) :
-                          true;
+        transacao.conta.tipoConta === TipoContaEnum.CREDITO :
+        transacao.conta.tipoConta === TipoContaEnum.DEBITO
+      ) :
+      true;
   }
 
   private filtroData(transacao: Transacao, dataInicial: Date, dataFinal: Date) {
     return dataInicial && dataFinal ?
-            (transacao.data >= dataInicial && transacao.data < dataFinal) :
-            true;
+      (transacao.data >= dataInicial && transacao.data < dataFinal) :
+      true;
   }
 
   private filtroCategoria(despesa: Despesa, categoria: CategoriaDespesaEnum) {
     return categoria ?
-              CategoriaDespesaEnum[despesa.categoria] === categoria :
-              true;
+      CategoriaDespesaEnum[despesa.categoria] === categoria :
+      true;
   }
 
   async mockData() {
@@ -152,9 +153,9 @@ export class TransacaoService {
       this.salvarTransacao(Receita.jsonToReceita(transacao2));
 
       const transacao3 = new Transferencia(new Date(), 5, 'teste 3',
-      await this.responsavelService.obterResponsavelPorId(1),
-      await this.contaService.obterContaPorId(1),
-      await this.contaService.obterContaPorId(2));
+        await this.responsavelService.obterResponsavelPorId(1),
+        await this.contaService.obterContaPorId(1),
+        await this.contaService.obterContaPorId(2));
       this.salvarTransacao(transacao3);
     }
   }
