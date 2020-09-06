@@ -1,11 +1,11 @@
-import { Transferencia } from './../model/transferencia';
-import { ResponsavelService } from './responsavel.service';
-import { Injectable } from '@angular/core';
-import { Conta } from '../model/conta';
-import { TipoContaEnum } from '../model/tipo-conta.enum';
-import { Transacao } from '../model/transacao';
-import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { TipoTransacaoEnum } from '../model/tipo-transacao.enum';
+import {Transferencia} from './../model/transferencia';
+import {ResponsavelService} from './responsavel.service';
+import {Injectable} from '@angular/core';
+import {Conta} from '../model/conta';
+import {TipoContaEnum} from '../model/tipo-conta.enum';
+import {Transacao} from '../model/transacao';
+import {NgxIndexedDBService} from 'ngx-indexed-db';
+import {TipoTransacaoEnum} from '../model/tipo-transacao.enum';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +36,7 @@ export class ContaService {
   }
 
   filtrarContasDesativadas(contas: Conta[]): Conta[] {
-    return contas.filter((conta: Conta) => conta.dataExclusao == null );
+    return contas.filter((conta: Conta) => conta.dataExclusao == null);
   }
 
   salvarConta(conta: Conta): void {
@@ -82,15 +82,27 @@ export class ContaService {
     await this.atualizarConta(conta);
   }
 
+  importarContas(contas: Conta[]) {
+    this.dbService.clear(this.key).then(() => {
+      contas.forEach(conta => {
+        this.salvarConta(conta);
+      })
+    }).catch(err => {
+      console.log("Erro ao importar contas: " + err);
+    }).finally(() => {
+      console.log("Improtacao de Contas concluida");
+    });
+  }
+
   async mockData() {
     const contas = await this.obterTodasContas();
     if (contas == null || contas.length === 0) {
       this.dbService.add(this.key, new Conta('Banco Digital', 100,
-      await this.responsavelService.obterResponsavelPorId(1), TipoContaEnum.DEBITO));
+        await this.responsavelService.obterResponsavelPorId(1), TipoContaEnum.DEBITO));
       this.dbService.add(this.key, new Conta('Bancão', 50,
-      await this.responsavelService.obterResponsavelPorId(1), TipoContaEnum.DEBITO));
+        await this.responsavelService.obterResponsavelPorId(1), TipoContaEnum.DEBITO));
       this.dbService.add(this.key, new Conta('Banco Digital', 200,
-      await this.responsavelService.obterResponsavelPorId(2), TipoContaEnum.DEBITO));
+        await this.responsavelService.obterResponsavelPorId(2), TipoContaEnum.DEBITO));
     }
   }
 }

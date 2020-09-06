@@ -24,17 +24,11 @@ export class FileService {
   }
 
   async importDatabase(database) {
-    const transacoes = database.transacoes as Transacao[];
-    transacoes.forEach(transacao => {
-      this.transacaoService.salvarTransacao(transacao);
-    });
-    const contas = database.contas as Conta[];
-    contas.forEach(conta => {
-      this.contaService.salvarConta(conta);
-    });
     const responsaveis = database.responsaveis as Responsavel[];
-    responsaveis.forEach(responsavel => {
-      this.responsavelService.salvarResponsavel(responsavel);
-    });
+    this.responsavelService.importarResponsaveis(responsaveis);
+    const contas = database.contas as Conta[];
+    this.contaService.importarContas(contas);
+    const transacoes = database.transacoes as Transacao[];
+    this.transacaoService.importarTransacoes(transacoes);
   }
 }

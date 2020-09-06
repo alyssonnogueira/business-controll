@@ -1,7 +1,7 @@
-import { Responsavel } from './../model/responsavel';
-import { Injectable } from '@angular/core';
-import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { Observable, pipe } from 'rxjs';
+import {Responsavel} from './../model/responsavel';
+import {Injectable} from '@angular/core';
+import {NgxIndexedDBService} from 'ngx-indexed-db';
+import {Observable, pipe} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class ResponsavelService {
   }
 
   filtrarResponsaveisDesativadas(contas: Responsavel[]): Responsavel[] {
-    return contas.filter((conta: Responsavel) => conta.dataExclusao == null );
+    return contas.filter((conta: Responsavel) => conta.dataExclusao == null);
   }
 
   salvarResponsavel(responsavel: Responsavel) {
@@ -41,6 +41,18 @@ export class ResponsavelService {
 
   responsaveisSaoIguais(responsavel1: Responsavel, responsavel2: Responsavel): boolean {
     return responsavel1 && responsavel2 ? responsavel1.id === responsavel2.id : responsavel1 === responsavel2;
+  }
+
+  importarResponsaveis(responsaveis: Responsavel[]) {
+    this.dbService.clear(this.key).then(() => {
+      responsaveis.forEach(responsavel => {
+        this.salvarResponsavel(responsavel);
+      })
+    }).catch(err => {
+      console.log("Erro ao importar responsaveis: " + err);
+    }).finally(() => {
+      console.log("Improtacao de Responsaveis concluida");
+    });
   }
 
   async mockData() {
