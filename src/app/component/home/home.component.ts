@@ -15,7 +15,8 @@ import { Transacao } from 'src/app/model/transacao';
 })
 export class HomeComponent implements OnInit {
 
-  responsaveis = [{id: 0, nome: 'Geral', dataExclusao: null}];
+  filtroGeral: Responsavel = {id: 0, nome: 'Geral', dataExclusao: null};
+  responsaveis = [this.filtroGeral];
   colunas = ['Despesas', 'Receitas', 'Cartão de Crédito'];
   categoriaEnum = [];
   rendaEnum = [];
@@ -135,8 +136,8 @@ export class HomeComponent implements OnInit {
   diminuirMes() {
     if (MesesEnum[this.mesSelecionado] > 0 ) {
       const mes = MesesEnum[this.mesSelecionado] - 1;
-      this.dataInicial = new Date((mes + 1) + '/01/' + this.hoje.getFullYear());
-      this.dataFinal = new Date((mes + 2) + '/01/' + this.hoje.getFullYear());
+      this.dataInicial = this.obterData(mes + 1);
+      this.dataFinal = this.obterData(mes + 2);
       this.mesSelecionado = MesesEnum[mes];
     }
     this.atualizarDados();
@@ -145,10 +146,14 @@ export class HomeComponent implements OnInit {
   aumentarMes() {
     if (MesesEnum[this.mesSelecionado] < 12 ) {
       const mes = MesesEnum[this.mesSelecionado] + 1;
-      this.dataInicial = new Date((mes + 1) + '/01/' + this.hoje.getFullYear());
-      this.dataFinal = new Date((mes + 2) + '/01/' + this.hoje.getFullYear());
+      this.dataInicial = this.obterData(mes + 1);
+      this.dataFinal = this.obterData(mes + 2);
       this.mesSelecionado = MesesEnum[mes];
     }
     this.atualizarDados();
+  }
+
+  private obterData(mes: number) {
+    return new Date(mes + '/01/' + this.hoje.getFullYear());
   }
 }

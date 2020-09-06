@@ -10,6 +10,8 @@ import {Transacao} from '../../model/transacao';
 import { TransacaoModalComponent } from '../transacao-modal/transacao-modal.component';
 import {MatDialog } from '@angular/material/dialog';
 import { Responsavel } from 'src/app/model/responsavel';
+import {Conta} from "../../model/conta";
+import {ContaService} from "../../services/conta.service";
 
 @Component({
   selector: 'app-transacao',
@@ -22,6 +24,8 @@ export class TransacaoComponent implements OnInit {
   dataSource: MatTableDataSource<Transacao>;
   responsaveis: Responsavel[] = [];
   responsaveisFiltrados: Responsavel[] = [];
+  contas: Conta[] = [];
+  contasFiltrados: Conta[] = [];
   tipoTransacoes = Object.keys(TipoTransacaoEnum);
   tipoTransacoesEnum = TipoTransacaoEnum;
   tipoTransacoesFiltradas: TipoTransacaoEnum[] = [];
@@ -35,7 +39,8 @@ export class TransacaoComponent implements OnInit {
   public currencyFormat = new CurrencyFormatPipe('pt-BR');
 
   constructor(private transacaoService: TransacaoService, public dialog: MatDialog,
-              protected responsavelService: ResponsavelService) {
+              protected responsavelService: ResponsavelService, private contaService: ContaService) {
+    this.tipoTransacoes.forEach(tipoTransacao => this.tipoTransacoesFiltradas.push(TipoTransacaoEnum[tipoTransacao]));
   }
 
   ngOnInit() {
@@ -48,8 +53,12 @@ export class TransacaoComponent implements OnInit {
     this.responsavelService.obterTodosResponsaveis().then(responsaveis =>  {
       this.responsaveis = responsaveis;
       this.responsaveisFiltrados = responsaveis.slice();
-    });
-    this.tipoTransacoes.forEach(tipoTransacao => this.tipoTransacoesFiltradas.push(TipoTransacaoEnum[tipoTransacao]));
+    })
+
+    this.contaService.obterTodasContas().then(contas => {
+      this.contas = contas;
+      this.contasFiltrados = contas.slice();
+    })
   }
 
   applyFilter(filterValue: string) {
@@ -58,6 +67,18 @@ export class TransacaoComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  atualizarResponsaveisEContas() {
+    this.contasFiltrados = [];
+    this.contas = [];
+    this.responsaveisFiltrados.forEach(responsavel => {
+      this.contaService.obterContaPorIdResponsavel(responsavel.id).then(contas => {
+        this.contas = this.contas.concat(contas);
+        this.contasFiltrados = this.contasFiltrados.concat(contas.slice());
+      });
+    });
+    this.atualizarDataSource();
   }
 
   adicionarTransacao() {
@@ -91,7 +112,7 @@ export class TransacaoComponent implements OnInit {
 
   atualizarDataSource() {
     this.transacaoService.obterTodasTransacoes(
-      this.tipoTransacoesFiltradas, this.responsaveisFiltrados, null, this.dataInicial, this.dataFinal)
+      this.tipoTransacoesFiltradas, this.responsaveisFiltrados, this.contasFiltrados, this.dataInicial, this.dataFinal)
       .then(transacoes => {
         this.dataSource.data = transacoes;
     });
@@ -115,32 +136,6 @@ export class TransacaoComponent implements OnInit {
       case TipoTransacaoEnum.TRANSFERENCIA: categoria = TipoTransacaoEnum.TRANSFERENCIA; break;
     }
     return categoria;
-  }
-
-  filtroResponsaveis(responsavel: Responsavel) {
-    const index = this.obterPosicaoResponsavelSelecionado(responsavel);
-    if (index === -1) {
-      this.responsaveisFiltrados.push(responsavel);
-    } else {
-      this.responsaveisFiltrados.splice(index, 1);
-    }
-    this.atualizarDataSource();
-  }
-
-  obterPosicaoResponsavelSelecionado(responsavel: Responsavel): number {
-    return this.responsaveisFiltrados.findIndex(responsavelFiltrado => {
-      return responsavelFiltrado.id === responsavel.id;
-    });
-  }
-
-  filtroTipoTransacoes(tipoTransacao: TipoTransacaoEnum) {
-    const index = this.tipoTransacoesFiltradas.findIndex(tipoTransacaoFiltrada => tipoTransacao === tipoTransacaoFiltrada);
-    if (index === -1) {
-      this.tipoTransacoesFiltradas.push(tipoTransacao);
-    } else {
-      this.tipoTransacoesFiltradas.splice(index, 1);
-    }
-    this.atualizarDataSource();
   }
 
   get valorTotal() {
