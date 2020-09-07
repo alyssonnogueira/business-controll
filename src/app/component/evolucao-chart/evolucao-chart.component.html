@@ -1,0 +1,14 @@
+<p class="titulo">Evolução das Contas</p>
+
+<div class="loader" *ngIf="isLoading">
+  <mat-progress-bar mode="query"></mat-progress-bar>
+</div>
+
+<div class="chart-wrapper" *ngIf="!isLoading">
+  <canvas baseChart
+          [datasets]="dados"
+          [labels]="labels"
+          [chartType]="lineChartType"
+          [options]="options">
+  </canvas>
+</div>
