@@ -85,6 +85,8 @@ export class ContaService {
   importarContas(contas: Conta[]) {
     this.dbService.clear(this.key).then(() => {
       contas.forEach(conta => {
+        conta.dataCriacao = new Date(conta.dataCriacao);
+        conta.dataExclusao = !!conta.dataExclusao ? new Date(conta.dataExclusao) : null;
         this.salvarConta(conta);
       })
     }).catch(err => {

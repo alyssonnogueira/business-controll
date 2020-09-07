@@ -1,17 +1,18 @@
-import { TipoTransacaoEnum } from './../../model/tipo-transacao.enum';
-import { ResponsavelService } from './../../services/responsavel.service';
-import { CurrencyFormatPipe } from './../../pipes/currency-format.pipe';
-import { CategoriaDespesaEnum } from 'src/app/model/categoria-despesa.enum';
-import { TipoRendaEnum } from './../../model/tipo-renda.enum';
-import { TransacaoService } from '../../services/transacao.service';
+import {TipoTransacaoEnum} from './../../model/tipo-transacao.enum';
+import {ResponsavelService} from './../../services/responsavel.service';
+import {CurrencyFormatPipe} from './../../pipes/currency-format.pipe';
+import {CategoriaDespesaEnum} from 'src/app/model/categoria-despesa.enum';
+import {TipoRendaEnum} from './../../model/tipo-renda.enum';
+import {TransacaoService} from '../../services/transacao.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
 import {Transacao} from '../../model/transacao';
-import { TransacaoModalComponent } from '../transacao-modal/transacao-modal.component';
-import {MatDialog } from '@angular/material/dialog';
-import { Responsavel } from 'src/app/model/responsavel';
+import {TransacaoModalComponent} from '../transacao-modal/transacao-modal.component';
+import {MatDialog} from '@angular/material/dialog';
+import {Responsavel} from 'src/app/model/responsavel';
 import {Conta} from "../../model/conta";
 import {ContaService} from "../../services/conta.service";
+import {Transferencia} from "../../model/transferencia";
 
 @Component({
   selector: 'app-transacao',
@@ -50,7 +51,7 @@ export class TransacaoComponent implements OnInit {
       this.dataSource.paginator.pageSize = 10;
       this.dataSource.sort = this.sort;
     });
-    this.responsavelService.obterTodosResponsaveis().then(responsaveis =>  {
+    this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
       this.responsaveis = responsaveis;
       this.responsaveisFiltrados = responsaveis.slice();
     })
@@ -101,7 +102,7 @@ export class TransacaoComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(novaTransacao => {
       return novaTransacao ? this.transacaoService.editarTransacao(transacao, novaTransacao)
-      .finally(() => this.atualizarDataSource()) : null;
+        .finally(() => this.atualizarDataSource()) : null;
     });
   }
 
@@ -115,15 +116,21 @@ export class TransacaoComponent implements OnInit {
       this.tipoTransacoesFiltradas, this.responsaveisFiltrados, this.contasFiltrados, this.dataInicial, this.dataFinal)
       .then(transacoes => {
         this.dataSource.data = transacoes;
-    });
+      });
   }
 
   obterClasseTransacao(transacao: Transacao): string {
     let classe = '';
     switch (transacao.tipoTransacao) {
-      case TipoTransacaoEnum.DESPESA: classe = 'despesa'; break;
-      case TipoTransacaoEnum.RECEITA: classe = 'receita'; break;
-      case TipoTransacaoEnum.TRANSFERENCIA: classe = 'transferencia'; break;
+      case TipoTransacaoEnum.DESPESA:
+        classe = 'despesa';
+        break;
+      case TipoTransacaoEnum.RECEITA:
+        classe = 'receita';
+        break;
+      case TipoTransacaoEnum.TRANSFERENCIA:
+        classe = 'transferencia';
+        break;
     }
     return classe;
   }
@@ -131,9 +138,15 @@ export class TransacaoComponent implements OnInit {
   obterCategoria(transacao): string {
     let categoria = null;
     switch (transacao.tipoTransacao) {
-      case TipoTransacaoEnum.DESPESA: categoria = CategoriaDespesaEnum[transacao.categoria]; break;
-      case TipoTransacaoEnum.RECEITA: categoria = TipoRendaEnum[transacao.tipoRenda]; break;
-      case TipoTransacaoEnum.TRANSFERENCIA: categoria = TipoTransacaoEnum.TRANSFERENCIA; break;
+      case TipoTransacaoEnum.DESPESA:
+        categoria = CategoriaDespesaEnum[transacao.categoria];
+        break;
+      case TipoTransacaoEnum.RECEITA:
+        categoria = TipoRendaEnum[transacao.tipoRenda];
+        break;
+      case TipoTransacaoEnum.TRANSFERENCIA:
+        categoria = TipoTransacaoEnum.TRANSFERENCIA;
+        break;
     }
     return categoria;
   }
@@ -142,11 +155,22 @@ export class TransacaoComponent implements OnInit {
     return this.dataSource ? this.dataSource.filteredData.map(transacao => {
       let valor = 0;
       switch (transacao.tipoTransacao) {
-        case TipoTransacaoEnum.DESPESA: valor = transacao.valor * -1; break;
-        case TipoTransacaoEnum.RECEITA: valor = transacao.valor; break;
-        case TipoTransacaoEnum.TRANSFERENCIA: valor = 0; break;
+        case TipoTransacaoEnum.DESPESA:
+          valor = transacao.valor * -1;
+          break;
+        case TipoTransacaoEnum.RECEITA:
+          valor = transacao.valor;
+          break;
+        case TipoTransacaoEnum.TRANSFERENCIA:
+          valor = 0;
+          break;
       }
       return valor;
     }).reduce((acumulador, valorCorrente) => acumulador + valorCorrente, 0) : 0;
+  }
+
+  obterLabelConta(transacao: Transacao) {
+    return transacao.tipoTransacao === TipoTransacaoEnum.TRANSFERENCIA ?
+      `${transacao.conta.nome} -> ${(transacao as Transferencia).contaDestino.nome}` : transacao.conta.nome
   }
 }
