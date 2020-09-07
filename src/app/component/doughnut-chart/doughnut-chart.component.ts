@@ -13,6 +13,7 @@ export class DoughnutChartComponent implements OnInit {
   @Input() dados: MultiDataSet = [];
   doughnutChartType: ChartType = 'doughnut';
   options = {
+    responsive: true,
     legend: {
       display: false
     }
