@@ -112,13 +112,13 @@ export class ContaComponent implements OnInit {
       const dataInicial = new Date((mesEmNumero + 1) + '/01/' + anoAtual);
       const dataFinal = new Date((mesEmNumero + 2) + '/01/' + anoAtual);
       this.totalEmMeses[mes] = conta.dataCriacao >= dataInicial && conta.dataCriacao < dataFinal ? conta.saldoOriginal : 0;
-      const totalDespesas = await this.transacaoService.obterTodasDespesas(null, conta, dataInicial, dataFinal)
+      const totalDespesas = await this.transacaoService.obterTodasDespesas(null, [conta], dataInicial, dataFinal)
         .then(despesas => this.somarValorDasTransacaoes(despesas));
-      const totalReceitas = await this.transacaoService.obterTodasReceitas(null, conta, dataInicial, dataFinal)
+      const totalReceitas = await this.transacaoService.obterTodasReceitas(null, [conta], dataInicial, dataFinal)
         .then(receitas => this.somarValorDasTransacaoes(receitas));
       const totalTransferenciasRecebidas = await this.transacaoService.obterTodasTransferencias(null, null, dataInicial, dataFinal, conta)
         .then(transferencias => this.somarValorDasTransacaoes(transferencias));
-      const totalTransferenciasRealizadas = await this.transacaoService.obterTodasTransferencias(null, conta, dataInicial, dataFinal)
+      const totalTransferenciasRealizadas = await this.transacaoService.obterTodasTransferencias(null, [conta], dataInicial, dataFinal)
         .then(transferencias => this.somarValorDasTransacaoes(transferencias));
       const saldoMesAnterior = mesEmNumero > 0 ? this.totalEmMeses[mesEmNumero - 1] :
                                                  (await this.saldoAnoAnterior(conta, anoAtual));
@@ -137,11 +137,11 @@ export class ContaComponent implements OnInit {
   async saldoAnoAnterior(conta: Conta, ano: number): Promise<number> {
     const dataFinal = new Date('01/01' + ano);
     const saldoInicial = conta.dataCriacao < dataFinal ? conta.saldoOriginal : 0;
-    const totalDespesas = await this.transacaoService.obterTodasDespesas(null, conta)
+    const totalDespesas = await this.transacaoService.obterTodasDespesas(null, [conta])
     .then(despesas => this.somarValorDasTransacaoes(despesas.filter(despesa => despesa.data < dataFinal)));
-    const totalReceitas = await this.transacaoService.obterTodasReceitas(null, conta)
+    const totalReceitas = await this.transacaoService.obterTodasReceitas(null, [conta])
       .then(receitas => this.somarValorDasTransacaoes(receitas.filter(receita => receita.data < dataFinal)));
-    const totalTransferenciasRecebidas = await this.transacaoService.obterTodasTransferencias(null, conta)
+    const totalTransferenciasRecebidas = await this.transacaoService.obterTodasTransferencias(null, [conta])
       .then(transferencias => this.somarValorDasTransacaoes(transferencias.filter(transferencia => transferencia.data < dataFinal)));
     const totalTransferenciasRealizadas = await this.transacaoService.obterTodasTransferencias(null, null, null, null, conta)
       .then(transferencias => this.somarValorDasTransacaoes(transferencias.filter(transferencia => transferencia.data < dataFinal)));

@@ -94,7 +94,7 @@
 
     <ng-container matColumnDef="conta">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Conta </th>
-      <td mat-cell *matCellDef="let transacao" > {{transacao.conta.nome}} </td>
+      <td mat-cell *matCellDef="let transacao" > {{ obterLabelConta(transacao) }} </td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
