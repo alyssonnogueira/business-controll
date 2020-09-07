@@ -32,10 +32,10 @@ export class TransacaoService {
                        dataFinal?: Date): Promise<Transacao[]> {
     return this.dbService.getAll(this.key).then((transacoes: Transacao[]) => {
       return transacoes
-        .filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes))
-        .filter(transacao => this.filtroConta(transacao, contas))
+        .filter(transacao => this.filtroData(transacao, dataInicial, dataFinal))
         .filter(transacao => this.filtroResponsavel(transacao, responsaveis))
-        .filter(transacao => this.filtroData(transacao, dataInicial, dataFinal));
+        .filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes))
+        .filter(transacao => this.filtroConta(transacao, contas));
     });
   }
 
@@ -132,12 +132,15 @@ export class TransacaoService {
   importarTransacoes(transacoes: Transacao[]) {
     this.dbService.clear(this.key).then(() => {
       transacoes.forEach(transacao => {
+        transacao.data = new Date(transacao.data);
         this.dbService.add(this.key, transacao);
       });
     }).catch(err => {
       console.log("Erro ao importar transacao: " + err);
     }).finally(() => {
-      console.log("Improtacao de Transacoes concluida");
+      this.dbService.count(this.key).then(nTransacoes => {
+        console.info(`Improtacao de Transacoes concluida \n ${nTransacoes} Transacoes importadas`);
+      });
     });
   }
 

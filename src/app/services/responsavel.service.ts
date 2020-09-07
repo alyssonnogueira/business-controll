@@ -51,7 +51,9 @@ export class ResponsavelService {
     }).catch(err => {
       console.log("Erro ao importar responsaveis: " + err);
     }).finally(() => {
-      console.log("Improtacao de Responsaveis concluida");
+      this.dbService.count(this.key).then(nResponsaveis => {
+        console.info(`Improtacao de Responsaveis concluida \n ${nResponsaveis} Responsaveis importadas`);
+      });
     });
   }
 

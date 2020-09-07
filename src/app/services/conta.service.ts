@@ -90,7 +90,9 @@ export class ContaService {
     }).catch(err => {
       console.log("Erro ao importar contas: " + err);
     }).finally(() => {
-      console.log("Improtacao de Contas concluida");
+      this.dbService.count(this.key).then(nContas => {
+        console.info(`Improtacao de Contas concluida \n ${nContas} Contas importadas`);
+      });
     });
   }
 
