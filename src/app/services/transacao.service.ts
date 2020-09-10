@@ -135,9 +135,9 @@ export class TransacaoService {
   }
 
   private filtroData(transacao: Transacao, dataInicial: Date, dataFinal: Date) {
-    return dataInicial && dataFinal ?
-      (transacao.data >= dataInicial && transacao.data < dataFinal) :
-      true;
+    const deveFiltrarDataInicial = dataInicial ? transacao.data >= dataInicial : true;
+    const deveFiltrarDataFinal = dataFinal ? transacao.data < dataFinal : true;
+    return deveFiltrarDataInicial && deveFiltrarDataFinal;
   }
 
   private filtroCategoria(despesa: Despesa, categoria: CategoriaDespesaEnum) {
