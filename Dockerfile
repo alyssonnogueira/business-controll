@@ -7,12 +7,12 @@ COPY . .
 RUN npm run build
 
 ### STAGE 2: Run ###
-FROM nginx:1.17.1-alpine
+FROM nginx:1.19.2
 
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 COPY --from=build /usr/src/app/dist/BusinessControlV3 /usr/share/nginx/html
 
-EXPOSE 8080
+EXPOSE $PORT
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD /bin/bash -c "envsubst '\$PORT' < /etc/nginx/nginx.conf > /etc/nginx/nginx.conf " && nginx -g 'daemon off;'
