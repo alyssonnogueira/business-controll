@@ -6,7 +6,7 @@
     "email": "alyssonnogueira@hotmail.com"
   },
   "license": "GNU General Public License, version 3 - GPLv3",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
