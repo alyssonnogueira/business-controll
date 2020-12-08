@@ -5,13 +5,15 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {RouterModule} from '@angular/router';
 import { ResponsavelComponent } from '../component/responsavel/responsavel.component';
+import {SorteioComponent} from '../component/sorteio/sorteio.component';
 
 const routes = [
   { path: '', component: HomeComponent },
   { path: 'home', component: HomeComponent },
   { path: 'transacoes', component: TransacaoComponent },
   { path: 'contas', component: ContaComponent },
-  { path: 'responsaveis', component: ResponsavelComponent }
+  { path: 'responsaveis', component: ResponsavelComponent },
+  { path: 'sorteio/:encrypt', component: SorteioComponent }
 ];
 
 @NgModule({

@@ -56,6 +56,7 @@ import { registerLocaleData } from '@angular/common';
 import { CurrencyMaskModule } from 'ng2-currency-mask';
 import { NgxCurrencyModule } from 'ngx-currency';
 import { EvolucaoChartComponent } from './component/evolucao-chart/evolucao-chart.component';
+import { SorteioComponent } from './component/sorteio/sorteio.component';
 
 registerLocaleData(localePTBR, 'pt-BR', localePTBRExtra);
 export const customCurrencyMaskConfig = {
@@ -87,6 +88,7 @@ export const customCurrencyMaskConfig = {
     DoughnutChartComponent,
     CurrencyFormatPipe,
     EvolucaoChartComponent,
+    SorteioComponent,
   ],
   entryComponents: [
     TransacaoModalComponent,
