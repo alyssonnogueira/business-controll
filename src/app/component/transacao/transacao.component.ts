@@ -10,9 +10,9 @@ import {Transacao} from '../../model/transacao';
 import {TransacaoModalComponent} from '../transacao-modal/transacao-modal.component';
 import {MatDialog} from '@angular/material/dialog';
 import {Responsavel} from 'src/app/model/responsavel';
-import {Conta} from "../../model/conta";
-import {ContaService} from "../../services/conta.service";
-import {Transferencia} from "../../model/transferencia";
+import {Conta} from '../../model/conta';
+import {ContaService} from '../../services/conta.service';
+import {Transferencia} from '../../model/transferencia';
 
 @Component({
   selector: 'app-transacao',
@@ -33,6 +33,9 @@ export class TransacaoComponent implements OnInit {
   hoje = new Date();
   dataInicial = new Date((this.hoje.getMonth() + 1) + '/01/' + this.hoje.getFullYear());
   dataFinal = new Date((this.hoje.getMonth() + 2) + '/01/' + this.hoje.getFullYear());
+  desativarResponsaveis = false;
+  desativarTransacoes = false;
+  desativarContas = false;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -41,7 +44,7 @@ export class TransacaoComponent implements OnInit {
 
   constructor(private transacaoService: TransacaoService, public dialog: MatDialog,
               protected responsavelService: ResponsavelService, private contaService: ContaService) {
-    this.tipoTransacoes.forEach(tipoTransacao => this.tipoTransacoesFiltradas.push(TipoTransacaoEnum[tipoTransacao]));
+    this.adicionarTodasAsTransacoes();
   }
 
   ngOnInit() {
@@ -54,12 +57,12 @@ export class TransacaoComponent implements OnInit {
     this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
       this.responsaveis = responsaveis;
       this.responsaveisFiltrados = responsaveis.slice();
-    })
+    });
 
     this.contaService.obterTodasContas().then(contas => {
       this.contas = contas;
       this.contasFiltrados = contas.slice();
-    })
+    });
   }
 
   applyFilter(filterValue: string) {
@@ -73,13 +76,57 @@ export class TransacaoComponent implements OnInit {
   atualizarResponsaveisEContas() {
     this.contasFiltrados = [];
     this.contas = [];
+    const promises = [];
     this.responsaveisFiltrados.forEach(responsavel => {
-      this.contaService.obterContaPorIdResponsavel(responsavel.id).then(contas => {
+      const promise = this.contaService.obterContaPorIdResponsavel(responsavel.id).then(contas => {
         this.contas = this.contas.concat(contas);
         this.contasFiltrados = this.contasFiltrados.concat(contas.slice());
       });
+      promises.push(promise);
     });
+
+    Promise.all(promises).finally(() => this.atualizarDataSource());
+  }
+
+  desativarAtivarTodosOsResponsaveis() {
+    this.desativarResponsaveis = !this.desativarResponsaveis;
+    if (this.desativarResponsaveis) {
+      this.responsaveisFiltrados = [];
+    } else {
+      this.responsaveisFiltrados = this.responsaveis.slice();
+    }
+    this.atualizarResponsaveisEContas();
+  }
+
+  adicionarTodasAsTransacoes() {
+    const filtro = [];
+    this.tipoTransacoes.forEach(tipoTransacao => filtro.push(TipoTransacaoEnum[tipoTransacao]));
+
+    this.tipoTransacoesFiltradas = filtro.slice();
+  }
+
+  desativarAtivarTodosAsTransacoes() {
+    this.desativarTransacoes = !this.desativarTransacoes;
+    if (this.desativarTransacoes) {
+      this.tipoTransacoesFiltradas = [];
+    } else {
+      this.adicionarTodasAsTransacoes();
+    }
     this.atualizarDataSource();
+  }
+
+  desativarAtivarTodosAsContas() {
+    this.desativarContas = !this.desativarContas;
+    if (this.desativarContas) {
+      this.contasFiltrados = [];
+    } else {
+      this.contasFiltrados = this.contas.slice();
+    }
+    this.atualizarDataSource();
+  }
+
+  activateDesactivate(flag) {
+    return flag ? 'Ativar' : 'Desativar';
   }
 
   adicionarTransacao() {
@@ -112,11 +159,16 @@ export class TransacaoComponent implements OnInit {
   }
 
   atualizarDataSource() {
+    console.log(this.contasFiltrados);
     this.transacaoService.obterTodasTransacoes(
       this.tipoTransacoesFiltradas, this.responsaveisFiltrados, this.contasFiltrados, this.dataInicial, this.dataFinal)
       .then(transacoes => {
         this.dataSource.data = transacoes;
       });
+
+    this.desativarResponsaveis = this.responsaveisFiltrados.length !== this.responsaveis.length;
+    this.desativarContas = this.contasFiltrados.length !== this.contas.length;
+    this.desativarTransacoes = this.tipoTransacoesFiltradas.length !== this.tipoTransacoes.length;
   }
 
   obterClasseTransacao(transacao: Transacao): string {
@@ -171,6 +223,6 @@ export class TransacaoComponent implements OnInit {
 
   obterLabelConta(transacao: Transacao) {
     return transacao.tipoTransacao === TipoTransacaoEnum.TRANSFERENCIA ?
-      `${transacao.conta.nome} -> ${(transacao as Transferencia).contaDestino.nome}` : transacao.conta.nome
+      `${transacao.conta.nome} -> ${(transacao as Transferencia).contaDestino.nome}` : transacao.conta.nome;
   }
 }
