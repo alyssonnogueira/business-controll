@@ -9,7 +9,11 @@
       <mat-form-field class="filtro filtro-transacao-section" appearance="fill">
         <mat-label>Responsáveis</mat-label>
         <mat-select multiple [(ngModel)]="responsaveisFiltrados">
-          <mat-option *ngFor="let responsavel of responsaveis" (click)="atualizarResponsaveisEContas()" [value]="responsavel">
+          <button mat-button (click)="desativarAtivarTodosOsResponsaveis()" class="ativar-desativar">
+            {{ activateDesactivate(desativarResponsaveis) }} todos os Responsáveis
+          </button>
+          <mat-option *ngFor="let responsavel of responsaveis" (click)="atualizarResponsaveisEContas()"
+                      [value]="responsavel">
             {{ responsavel.nome }}
           </mat-option>
         </mat-select>
@@ -19,7 +23,11 @@
       <mat-form-field class="filtro filtro-transacao-section" appearance="fill">
         <mat-label>Tipos de Transação</mat-label>
         <mat-select multiple [(ngModel)]="tipoTransacoesFiltradas">
-          <mat-option *ngFor="let tipoTransacao of tipoTransacoes" (click)="atualizarDataSource()" [value]="tipoTransacoesEnum[tipoTransacao]">
+          <button mat-button (click)="desativarAtivarTodosAsTransacoes()" class="ativar-desativar">
+            {{ activateDesactivate(desativarTransacoes) }} todos os tipos de transações
+          </button>
+          <mat-option *ngFor="let tipoTransacao of tipoTransacoes" (click)="atualizarDataSource()"
+                      [value]="tipoTransacoesEnum[tipoTransacao]">
             {{ tipoTransacoesEnum[tipoTransacao] }}
           </mat-option>
         </mat-select>
@@ -29,6 +37,9 @@
       <mat-form-field class="filtro filtro-transacao-section" appearance="fill">
         <mat-label>Contas</mat-label>
         <mat-select multiple [(ngModel)]="contasFiltrados">
+          <button mat-button (click)="desativarAtivarTodosAsContas()" class="ativar-desativar">
+            {{ activateDesactivate(desativarContas) }} todas as Contas
+          </button>
           <mat-option *ngFor="let conta of contas" (click)="atualizarDataSource()" [value]="conta">
             {{ conta.nome }}
           </mat-option>
@@ -38,12 +49,14 @@
     <mat-grid-tile [colspan]="1" [rowspan]="1">
       <div class="filtro-data-section">
         <mat-form-field class="filtro-data-section">
-          <input matInput placeholder="Data inicial" [(ngModel)]="dataInicial" [matDatepicker]="pickerInicial" (dateChange)="atualizarDataSource()">
+          <input matInput placeholder="Data inicial" [(ngModel)]="dataInicial" [matDatepicker]="pickerInicial"
+                 (dateChange)="atualizarDataSource()">
           <mat-datepicker-toggle matSuffix [for]="pickerInicial"></mat-datepicker-toggle>
           <mat-datepicker #pickerInicial></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="filtro-data-section">
-          <input matInput placeholder="Data final" [(ngModel)]="dataFinal" [matDatepicker]="pickerFinal" (dateChange)="atualizarDataSource()">
+          <input matInput placeholder="Data final" [(ngModel)]="dataFinal" [matDatepicker]="pickerFinal"
+                 (dateChange)="atualizarDataSource()">
           <mat-datepicker-toggle matSuffix [for]="pickerFinal"></mat-datepicker-toggle>
           <mat-datepicker #pickerFinal></mat-datepicker>
         </mat-form-field>
@@ -57,44 +70,45 @@
   <table mat-table [dataSource]="dataSource" matSort matSortActive="data" matSortDirection="desc">
 
     <ng-container matColumnDef="id">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> ID </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> ID</th>
       <td mat-cell *matCellDef="let transacao"> {{transacao.id}} </td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="data">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Data </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Data</th>
       <td mat-cell *matCellDef="let transacao"> {{transacao.data | date: 'dd/MM/yyyy'}} </td>
-      <td mat-footer-cell *matFooterCellDef> Total </td>
+      <td mat-footer-cell *matFooterCellDef> Total</td>
     </ng-container>
 
     <ng-container matColumnDef="valor">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor </th>
-      <td mat-cell *matCellDef="let transacao" [ngClass]="obterClasseTransacao(transacao)"> {{transacao.valor | currencyFormat}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Valor</th>
+      <td mat-cell *matCellDef="let transacao"
+          [ngClass]="obterClasseTransacao(transacao)"> {{transacao.valor | currencyFormat}} </td>
       <td mat-footer-cell *matFooterCellDef> {{ valorTotal | currencyFormat}} </td>
     </ng-container>
 
     <ng-container matColumnDef="descricao">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição </th>
-      <td mat-cell *matCellDef="let transacao" > {{transacao.descricao}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Descrição</th>
+      <td mat-cell *matCellDef="let transacao"> {{transacao.descricao}} </td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="categoria">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Categoria </th>
-        <td mat-cell *matCellDef="let transacao" > {{ obterCategoria(transacao)}} </td>
-        <td mat-footer-cell *matFooterCellDef></td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Categoria</th>
+      <td mat-cell *matCellDef="let transacao"> {{ obterCategoria(transacao)}} </td>
+      <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="responsavel">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Responsável </th>
-      <td mat-cell *matCellDef="let transacao" > {{transacao.responsavel.nome}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Responsável</th>
+      <td mat-cell *matCellDef="let transacao"> {{transacao.responsavel.nome}} </td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
     <ng-container matColumnDef="conta">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Conta </th>
-      <td mat-cell *matCellDef="let transacao" > {{ obterLabelConta(transacao) }} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Conta</th>
+      <td mat-cell *matCellDef="let transacao"> {{ obterLabelConta(transacao) }} </td>
       <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
 
@@ -123,7 +137,9 @@
     <tr mat-footer-row *matFooterRowDef="displayedColumns; sticky: true"></tr>
     <!-- <tr mat-footer-row *matFooterRowDef="displayedColumns"></tr> -->
   </table>
-  <button class="lado" mat-fab color="primary"  (click)="adicionarTransacao()"> <mat-icon>add</mat-icon></button>
+  <button class="lado" mat-fab color="primary" (click)="adicionarTransacao()">
+    <mat-icon>add</mat-icon>
+  </button>
 
   <mat-paginator [pageSizeOptions]="[5, 10, 25, 50, 100]"></mat-paginator>
 </div>

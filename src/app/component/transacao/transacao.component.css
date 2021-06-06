@@ -45,3 +45,7 @@ tr:hover{
 .responsavel-checkbox {
   display: block;
 }
+
+.ativar-desativar {
+  width: 100%;
+}

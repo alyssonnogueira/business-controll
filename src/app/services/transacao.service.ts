@@ -95,13 +95,13 @@ export class TransacaoService {
   }
 
   private filtroTipoTransacao(transacao: Transacao, tipoTransacoes: TipoTransacaoEnum[]) {
-    return tipoTransacoes && tipoTransacoes.length > 0 ?
+    return tipoTransacoes ?
       tipoTransacoes.some(tipoTransacao => transacao.tipoTransacao === tipoTransacao) :
       true;
   }
 
   private filtroConta(transacao: Transacao, contas: Conta[]) {
-    if (!contas || contas.length <= 0) {
+    if (!contas) {
       return true;
     }
 
@@ -117,11 +117,11 @@ export class TransacaoService {
   }
 
   private filtroContaDestino(transferencia: Transferencia, contas: Conta[]) {
-    return contas.some(conta => transferencia.contaDestino.id === conta.id)
+    return contas.some(conta => transferencia.contaDestino.id === conta.id);
   }
 
   private filtroResponsavel(transacao: Transacao, responsaveis: Responsavel[]) {
-    return responsaveis && responsaveis.length > 0 ?
+    return responsaveis ?
       responsaveis.some(responsavel => transacao.responsavel.id === responsavel.id) :
       true;
   }
