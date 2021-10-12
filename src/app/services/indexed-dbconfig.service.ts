@@ -1,10 +1,12 @@
-import { Injectable } from '@angular/core';
+import {Directive, Injectable} from '@angular/core';
 import {DBConfig, ObjectStoreMeta} from 'ngx-indexed-db/lib/ngx-indexed-db.meta';
 import { Conta } from '../model/conta';
 
-@Injectable({
-  providedIn: 'root'
-})
+// @Injectable({
+//   providedIn: 'root'
+// })
+@Directive()
+// tslint:disable-next-line:directive-class-suffix
 export class IndexedDBConfigService implements DBConfig {
 
   migrationFactory?: () => {
