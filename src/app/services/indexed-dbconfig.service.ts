@@ -3,6 +3,9 @@ import {DBConfig, ObjectStoreMeta} from 'ngx-indexed-db/lib/ngx-indexed-db.meta'
 import { Conta } from '../model/conta';
 
 @Directive()
+@Injectable({
+  providedIn: 'root'
+})
 // tslint:disable-next-line:directive-class-suffix
 export class IndexedDBConfigService implements DBConfig {
 
