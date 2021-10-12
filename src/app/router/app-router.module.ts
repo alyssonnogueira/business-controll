@@ -22,7 +22,7 @@ const routes = [
     CommonModule,
     RouterModule.forRoot(
       routes,
-      { enableTracing: false }
+      { enableTracing: false, relativeLinkResolution: 'legacy' }
     ),
   ],
   exports: [RouterModule]

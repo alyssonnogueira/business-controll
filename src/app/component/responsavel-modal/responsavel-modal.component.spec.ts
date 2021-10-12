@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ResponsavelModalComponent } from './responsavel-modal.component';
 
@@ -6,7 +6,7 @@ describe('ResponsavelModalComponent', () => {
   let component: ResponsavelModalComponent;
   let fixture: ComponentFixture<ResponsavelModalComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ResponsavelModalComponent ]
     })
