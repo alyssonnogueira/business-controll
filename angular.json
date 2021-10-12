@@ -123,5 +123,8 @@
       }
     }
   },
-  "defaultProject": "BusinessControlV3"
+  "defaultProject": "BusinessControlV3",
+  "cli": {
+    "analytics": "f9f26925-21c4-4737-a8b2-5d241961e96a"
+  }
 }
