@@ -4,7 +4,8 @@ import { IndexedDBConfigService } from './../../services/indexed-dbconfig.servic
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import fileSaver from 'file-saver';
-import {MatDialog, MatSidenavContainer} from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSidenavContainer } from '@angular/material/sidenav';
 
 @Component({
   selector: 'app-menu',

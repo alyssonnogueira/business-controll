@@ -2,7 +2,10 @@ import { ResponsavelModalComponent } from './../responsavel-modal/responsavel-mo
 import { ResponsavelService } from './../../services/responsavel.service';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Responsavel } from 'src/app/model/responsavel';
-import { MatTableDataSource, MatPaginator, MatSort, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 
 @Component({
   selector: 'app-responsavel',

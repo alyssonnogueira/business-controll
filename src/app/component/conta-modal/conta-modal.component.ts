@@ -1,7 +1,7 @@
 import { Responsavel } from './../../model/responsavel';
 import { TipoContaEnum } from '../../model/tipo-conta.enum';
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Conta } from '../../model/conta';
 import { ResponsavelService } from '../../services/responsavel.service';
 

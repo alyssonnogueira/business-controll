@@ -9,7 +9,7 @@ import { Transacao } from '../../model/transacao';
 import { TipoTransacaoEnum } from '../../model/tipo-transacao.enum';
 import { CategoriaDespesaEnum } from '../../model/categoria-despesa.enum';
 import { TipoRendaEnum } from '../../model/tipo-renda.enum';
-import {MatSnackBar} from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-transacao-modal',
