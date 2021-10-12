@@ -34,7 +34,7 @@
     "ng2-charts": "^2.4.3",
     "ng2-currency-mask": "^5.3.1",
     "ngx-currency": "2.0.0",
-    "ngx-indexed-db": "^4.0.14",
+    "ngx-indexed-db": "^9.3.0",
     "rxjs": "~6.6.7",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
