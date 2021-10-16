@@ -12,7 +12,7 @@ import {CategoriaDespesaEnum} from '../model/categoria-despesa.enum';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
 import {Responsavel} from '../model/responsavel';
 import {TipoContaEnum} from '../model/tipo-conta.enum';
-import {TransitiveCompileNgModuleMetadata} from "@angular/compiler";
+import {lastValueFrom, map, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -30,14 +30,23 @@ export class TransacaoService {
                        responsaveis?: Responsavel[],
                        contas?: Conta[],
                        dataInicial?: Date,
-                       dataFinal?: Date): Promise<Transacao[]> {
-    return this.dbService.getAll(this.key).then((transacoes: Transacao[]) => {
-      return transacoes
+                       dataFinal?: Date): Observable<Transacao[]> {
+    return this.dbService.getAll(this.key).pipe(
+      map((transacoes: Transacao[]) => transacoes
         .filter(transacao => this.filtroData(transacao, dataInicial, dataFinal))
         .filter(transacao => this.filtroResponsavel(transacao, responsaveis))
         .filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes))
-        .filter(transacao => this.filtroConta(transacao, contas));
-    });
+        .filter(transacao => this.filtroConta(transacao, contas))
+      )
+    );
+
+    // return this.dbService.getAll(this.key).pipe((transacoes: TransacTraao[]) => {
+    //   return transacoes
+    //     .filter(transacao => this.filtroData(transacao, dataInicial, dataFinal))
+    //     .filter(transacao => this.filtroResponsavel(transacao, responsaveis))
+    //     .filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes))
+    //     .filter(transacao => this.filtroConta(transacao, contas));
+    // }).subscribe();
   }
 
   obterTodasDespesas(responsaveis?: Responsavel[],
@@ -45,10 +54,12 @@ export class TransacaoService {
                      dataInicial?: Date,
                      dataFinal?: Date,
                      categoria?: CategoriaDespesaEnum,
-                     isCredito?: boolean): Promise<Despesa[]> {
+                     isCredito?: boolean): Observable<Despesa[]> {
     return this.obterTodasTransacoes([TipoTransacaoEnum.DESPESA], responsaveis, contas, dataInicial, dataFinal)
-      .then((despesas: Despesa[]) =>
-        despesas.filter(despesa => this.filtroCategoria(despesa, categoria) && this.filtroDebitoCredito(despesa, isCredito))
+      .pipe(
+        map((despesas: Despesa[]) =>
+          despesas.filter(despesa => this.filtroCategoria(despesa, categoria) && this.filtroDebitoCredito(despesa, isCredito))
+        )
       );
   }
 
@@ -56,23 +67,27 @@ export class TransacaoService {
                      contas?: Conta[],
                      dataInicial?: Date,
                      dataFinal?: Date,
-                     renda?: TipoRendaEnum): Promise<Receita[]> {
+                     renda?: TipoRendaEnum): Observable<Receita[]> {
     return this.obterTodasTransacoes([TipoTransacaoEnum.RECEITA], responsaveis, contas, dataInicial, dataFinal)
-      .then((receitas: Receita[]) =>
-        receitas.filter(receita => renda ? TipoRendaEnum[receita.tipoRenda] === renda : true)
-      );
+      .pipe(
+        map((receitas: Receita[]) =>
+          receitas.filter(receita => renda ? TipoRendaEnum[receita.tipoRenda] === renda : true)
+        ));
   }
 
   obterTodasTransferencias(responsaveis?: Responsavel[],
                            contas?: Conta[],
                            dataInicial?: Date,
                            dataFinal?: Date,
-                           contaDestino?: Conta): Promise<Transferencia[]> {
+                           contaDestino?: Conta): Observable<Transferencia[]> {
     return this.obterTodasTransacoes([TipoTransacaoEnum.TRANSFERENCIA], responsaveis, null, dataInicial, dataFinal)
-      .then((transferencias: Transferencia[]) =>
-        transferencias.filter(transferencia => contas ? this.filtroContaOrigem(transferencia, contas) : true)
-          .filter(transferencia => contaDestino ? this.filtroContaDestino(transferencia, [contaDestino]) : true)
-      );
+      .pipe(
+        map((transferencias: Transferencia[]) => {
+            return transferencias
+              .filter(transferencia => contas ? this.filtroContaOrigem(transferencia, contas) : true)
+              .filter(transferencia => contaDestino ? this.filtroContaDestino(transferencia, [contaDestino]) : true);
+          }
+        ));
   }
 
   salvarTransacao(transacao: Transacao): void {
@@ -147,22 +162,25 @@ export class TransacaoService {
   }
 
   importarTransacoes(transacoes: Transacao[]) {
-    this.dbService.clear(this.key).then(() => {
-      transacoes.forEach(transacao => {
-        transacao.data = new Date(transacao.data);
-        this.dbService.add(this.key, transacao);
+    this.dbService.clear(this.key).subscribe(
+      {
+        next: () => transacoes.forEach(transacao => {
+          transacao.data = new Date(transacao.data);
+          this.dbService.add(this.key, transacao);
+        }),
+        error: err => console.log('Erro ao importar transacao: ' + err),
+        complete: () =>
+          this.dbService.count(this.key).subscribe({
+            next: nTransacoes => {
+              console.log(`Improtacao de Transacoes concluida \n ${nTransacoes} Transacoes importadas`);
+            }
+          })
       });
-    }).catch(err => {
-      console.log("Erro ao importar transacao: " + err);
-    }).finally(() => {
-      this.dbService.count(this.key).then(nTransacoes => {
-        console.info(`Improtacao de Transacoes concluida \n ${nTransacoes} Transacoes importadas`);
-      });
-    });
   }
 
   async mockData() {
-    const transacoes = await this.obterTodasTransacoes();
+    const transacoes = await lastValueFrom(this.obterTodasTransacoes());
+
     if (transacoes == null || transacoes.length === 0) {
       const transacao1 = {
         data: new Date(),
@@ -185,9 +203,9 @@ export class TransacaoService {
       this.salvarTransacao(Receita.jsonToReceita(transacao2));
 
       const transacao3 = new Transferencia(new Date(), 5, 'teste 3',
-        await this.responsavelService.obterResponsavelPorId(1),
-        await this.contaService.obterContaPorId(1),
-        await this.contaService.obterContaPorId(2));
+        await lastValueFrom(this.responsavelService.obterResponsavelPorId(1)),
+        await lastValueFrom(this.contaService.obterContaPorId(1)),
+        await lastValueFrom(this.contaService.obterContaPorId(2)));
       this.salvarTransacao(transacao3);
     }
   }

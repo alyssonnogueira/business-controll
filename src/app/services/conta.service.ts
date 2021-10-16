@@ -6,6 +6,7 @@ import {TipoContaEnum} from '../model/tipo-conta.enum';
 import {Transacao} from '../model/transacao';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
 import {TipoTransacaoEnum} from '../model/tipo-transacao.enum';
+import {lastValueFrom, map, Observable} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -18,16 +19,16 @@ export class ContaService {
     this.mockData();
   }
 
-  obterContaPorId(id: number): Promise<Conta> {
+  obterContaPorId(id: number): Observable<Conta> {
     return this.dbService.getByID(this.key, id);
   }
 
-  obterTodasContas(): Promise<Conta[]> {
-    return this.dbService.getAll(this.key).then(this.filtrarContasDesativadas);
+  obterTodasContas(): Observable<Conta[]> {
+    return this.dbService.getAll(this.key).pipe(map(this.filtrarContasDesativadas));
   }
 
   async obterContaPorIdResponsavel(idResponsavel: number): Promise<Conta[]> {
-    const contas = await this.obterTodasContas();
+    const contas = await lastValueFrom(this.obterTodasContas());
     return this.filtrarContasDesativadas(contas.filter(conta => conta.responsavel.id === idResponsavel));
   }
 
@@ -43,24 +44,25 @@ export class ContaService {
     this.dbService.add(this.key, conta);
   }
 
-  atualizarConta(conta: Conta): Promise<Conta> {
-    return this.dbService.update(this.key, conta);
+  atualizarConta(conta: Conta): Observable<Conta> {
+    return this.dbService.update(this.key, conta)
+      .pipe(map((contas: Conta[]) => contas[0]));
   }
 
-  desativarConta(conta: Conta): Promise<Conta> {
+  desativarConta(conta: Conta): Observable<Conta> {
     conta.dataExclusao = new Date();
     return this.atualizarConta(conta);
   }
 
   async alterarSaldoConta(transacao: Transacao) {
-    const conta = await this.obterContaPorId(transacao.conta.id);
+    const conta = await lastValueFrom(this.obterContaPorId(transacao.conta.id));
     if (TipoTransacaoEnum.DESPESA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
     } else if (TipoTransacaoEnum.RECEITA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
     } else if (TipoTransacaoEnum.TRANSFERENCIA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
-      const contaDestino = await this.obterContaPorId((transacao as Transferencia).contaDestino.id);
+      const contaDestino = await lastValueFrom(this.obterContaPorId((transacao as Transferencia).contaDestino.id));
       contaDestino.saldo += transacao.valor;
       await this.atualizarConta(contaDestino);
     }
@@ -68,14 +70,14 @@ export class ContaService {
   }
 
   async desfazerAlteracao(transacao: Transacao) {
-    const conta = await this.obterContaPorId(transacao.conta.id);
+    const conta = await lastValueFrom(this.obterContaPorId(transacao.conta.id));
     if (TipoTransacaoEnum.DESPESA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
     } else if (TipoTransacaoEnum.RECEITA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
     } else if (TipoTransacaoEnum.TRANSFERENCIA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
-      const contaDestino = await this.obterContaPorId((transacao as Transferencia).contaDestino.id);
+      const contaDestino = await lastValueFrom(this.obterContaPorId((transacao as Transferencia).contaDestino.id));
       contaDestino.saldo -= transacao.valor;
       await this.atualizarConta(contaDestino);
     }
@@ -83,30 +85,29 @@ export class ContaService {
   }
 
   importarContas(contas: Conta[]) {
-    this.dbService.clear(this.key).then(() => {
-      contas.forEach(conta => {
-        conta.dataCriacao = new Date(conta.dataCriacao);
-        conta.dataExclusao = !!conta.dataExclusao ? new Date(conta.dataExclusao) : null;
-        this.salvarConta(conta);
-      })
-    }).catch(err => {
-      console.log("Erro ao importar contas: " + err);
-    }).finally(() => {
-      this.dbService.count(this.key).then(nContas => {
-        console.info(`Improtacao de Contas concluida \n ${nContas} Contas importadas`);
+    this.dbService.clear(this.key).subscribe(
+      {
+        next: () => contas.forEach(conta => {
+          conta.dataCriacao = new Date(conta.dataCriacao);
+          conta.dataExclusao = !!conta.dataExclusao ? new Date(conta.dataExclusao) : null;
+          this.salvarConta(conta);
+        }),
+        error: err => console.log('Erro ao importar contas: ' + err),
+        complete: () => this.dbService.count(this.key).subscribe(nContas => {
+          console.log(`Improtacao de Contas concluida \n ${nContas} Contas importadas`);
+        })
       });
-    });
   }
 
   async mockData() {
-    const contas = await this.obterTodasContas();
+    const contas = await lastValueFrom(this.obterTodasContas());
     if (contas == null || contas.length === 0) {
       this.dbService.add(this.key, new Conta('Banco Digital', 100,
-        await this.responsavelService.obterResponsavelPorId(1), TipoContaEnum.DEBITO));
+        await lastValueFrom(this.responsavelService.obterResponsavelPorId(1)), TipoContaEnum.DEBITO));
       this.dbService.add(this.key, new Conta('Bancão', 50,
-        await this.responsavelService.obterResponsavelPorId(1), TipoContaEnum.DEBITO));
+        await lastValueFrom(this.responsavelService.obterResponsavelPorId(1)), TipoContaEnum.DEBITO));
       this.dbService.add(this.key, new Conta('Banco Digital', 200,
-        await this.responsavelService.obterResponsavelPorId(2), TipoContaEnum.DEBITO));
+        await lastValueFrom(this.responsavelService.obterResponsavelPorId(2)), TipoContaEnum.DEBITO));
     }
   }
 }
