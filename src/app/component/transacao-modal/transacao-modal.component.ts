@@ -27,13 +27,17 @@ export class TransacaoModalComponent implements OnInit {
   responsaveis = [];
   contas = [];
 
+  contaDestinoData = (this.data as Transferencia).contaDestino;
+  tipoRendaData = (this.data as Receita).tipoRenda;
+  categoriaData = (this.data as Despesa).categoria;
+
   constructor(
     public dialogRef: MatDialogRef<TransacaoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Transacao,
-    protected responsavelService: ResponsavelService,
-    protected contaService: ContaService,
+    public responsavelService: ResponsavelService,
+    public contaService: ContaService,
     private snackBar: MatSnackBar) {
-      this.responsavelService.obterTodosResponsaveis().then(responsaveis => this.responsaveis = responsaveis);
+      this.responsavelService.obterTodosResponsaveis().subscribe(responsaveis => this.responsaveis = responsaveis);
   }
 
   ngOnInit() {

@@ -19,10 +19,10 @@ export class ContaModalComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<ContaModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: Conta,
-    protected responsavelService: ResponsavelService) { }
+    public responsavelService: ResponsavelService) { }
 
   ngOnInit() {
-    this.responsavelService.obterTodosResponsaveis().then(responsaveis => this.responsaveis = responsaveis);
+    this.responsavelService.obterTodosResponsaveis().subscribe(responsaveis => this.responsaveis = responsaveis);
   }
 
   onCancel(): void {

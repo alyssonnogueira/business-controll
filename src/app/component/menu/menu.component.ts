@@ -48,4 +48,6 @@ export class MenuComponent implements OnInit {
     this.sidenavContainer.close();
   }
 
+  logout() {}
+
 }

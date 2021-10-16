@@ -7,6 +7,7 @@ import { ResponsavelService } from './../../services/responsavel.service';
 import { Component, OnInit } from '@angular/core';
 import { MultiDataSet } from 'ng2-charts';
 import { Transacao } from 'src/app/model/transacao';
+import {lastValueFrom} from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +34,7 @@ export class HomeComponent implements OnInit {
   constructor(private responsavelService: ResponsavelService, private transacaoService: TransacaoService) { }
 
   ngOnInit() {
-    this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
+    this.responsavelService.obterTodosResponsaveis().subscribe(responsaveis => {
       if (responsaveis.length > 1) {
         responsaveis.forEach(responsavel => this.responsaveis.push(responsavel));
       } else {
@@ -92,8 +93,8 @@ export class HomeComponent implements OnInit {
 
     for (const responsavel of responsaveis) {
       for (const categoria of this.keys(CategoriaDespesaEnum)) {
-        const despesasFiltradas = await this.transacaoService.obterTodasDespesas([responsavel],
-          null, this.dataInicial, this.dataFinal, CategoriaDespesaEnum[categoria], isCredito);
+        const despesasFiltradas = await lastValueFrom(this.transacaoService.obterTodasDespesas([responsavel],
+          null, this.dataInicial, this.dataFinal, CategoriaDespesaEnum[categoria], isCredito));
         this.dados[responsavel.id][chave][0].push(this.somarValorDasTransacaoes(despesasFiltradas));
       }
     }
@@ -112,8 +113,8 @@ export class HomeComponent implements OnInit {
     const responsaveis = todosResponsaveis.filter(responsavel => responsavel.id !== 0);
     for (const responsavel of responsaveis) {
       for (const renda of this.keys(TipoRendaEnum)) {
-        const receitasFiltradas = await this.transacaoService.obterTodasReceitas([responsavel],
-          null, this.dataInicial, this.dataFinal, TipoRendaEnum[renda]);
+        const receitasFiltradas = await lastValueFrom(this.transacaoService.obterTodasReceitas([responsavel],
+          null, this.dataInicial, this.dataFinal, TipoRendaEnum[renda]));
         this.dados[responsavel.id].receitas[0].push(this.somarValorDasTransacaoes(receitasFiltradas));
       }
     }

@@ -23,7 +23,7 @@ export class ResponsavelComponent implements OnInit {
   constructor(private responsavelService: ResponsavelService, public dialog: MatDialog ) {}
 
   ngOnInit() {
-    this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
+    this.responsavelService.obterTodosResponsaveis().subscribe(responsaveis => {
       this.dataSource = new MatTableDataSource(responsaveis);
       this.dataSource.paginator = this.paginator;
       this.dataSource.paginator.pageSize = 10;
@@ -59,17 +59,17 @@ export class ResponsavelComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(responsavelEditada => {
       return responsavelEditada ? this.responsavelService.atualizarResponsavel(responsavelEditada)
-        .finally(() => this.atualizarDataSource()) : null;
+        .subscribe(() => this.atualizarDataSource()) : null;
     });
   }
 
   desativarResponsavel(responsavel: Responsavel) {
     this.responsavelService.desativarResponsavel(responsavel)
-      .finally(() => this.atualizarDataSource());
+      .subscribe(() => this.atualizarDataSource());
   }
 
   atualizarDataSource() {
-    this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
+    this.responsavelService.obterTodosResponsaveis().subscribe(responsaveis => {
       this.dataSource.data = responsaveis;
     });
   }

@@ -9,7 +9,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import {Conta} from '../../model/conta';
 import {trigger, state, style, transition, animate} from '@angular/animations';
-import {BalancoService} from "../../services/balanco.service";
+import {BalancoService} from '../../services/balanco.service';
 
 @Component({
   selector: 'app-conta',
@@ -42,7 +42,7 @@ export class ContaComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.contaService.obterTodasContas().then(contas => {
+    this.contaService.obterTodasContas().subscribe(contas => {
       this.dataSource = new MatTableDataSource(contas);
       this.dataSource.paginator = this.paginator;
       this.dataSource.paginator.pageSize = 10;
@@ -77,17 +77,17 @@ export class ContaComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(contaEditada => {
-      return contaEditada ? this.contaService.atualizarConta(contaEditada).finally(() => this.atualizarDataSource()) : null;
+      return contaEditada ? this.contaService.atualizarConta(contaEditada).subscribe(() => this.atualizarDataSource()) : null;
     });
   }
 
   desativarConta(conta: Conta) {
     this.contaService.desativarConta(conta)
-      .finally(() => this.atualizarDataSource());
+      .subscribe(() => this.atualizarDataSource());
   }
 
   atualizarDataSource() {
-    this.contaService.obterTodasContas().then(contas => {
+    this.contaService.obterTodasContas().subscribe(contas => {
       this.dataSource.data = contas;
     });
   }

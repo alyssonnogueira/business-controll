@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import {Label} from "ng2-charts";
-import {ChartDataSets, ChartType} from "chart.js";
-import {MesesEnum} from "../../model/meses.enum";
-import {Conta} from "../../model/conta";
-import {ContaService} from "../../services/conta.service";
-import {TransacaoService} from "../../services/transacao.service";
-import {TipoContaEnum} from "../../model/tipo-conta.enum";
-import {BalancoService} from "../../services/balanco.service";
+import {Label} from 'ng2-charts';
+import {ChartDataSets, ChartType} from 'chart.js';
+import {MesesEnum} from '../../model/meses.enum';
+import {Conta} from '../../model/conta';
+import {ContaService} from '../../services/conta.service';
+import {TransacaoService} from '../../services/transacao.service';
+import {TipoContaEnum} from '../../model/tipo-conta.enum';
+import {BalancoService} from '../../services/balanco.service';
+import {lastValueFrom} from 'rxjs';
 
 @Component({
   selector: 'app-evolucao-chart',
@@ -38,13 +39,13 @@ export class EvolucaoChartComponent implements OnInit {
   }
 
   async inicializarDados() {
-    const contas = await this.contaService.obterTodasContas();
+    const contas = await lastValueFrom(this.contaService.obterTodasContas());
     this.isLoading = true;
-    const promises = contas.filter(conta => conta.tipoConta == TipoContaEnum.DEBITO).map(conta => {
+    const promises = contas.filter(conta => conta.tipoConta === TipoContaEnum.DEBITO).map(conta => {
       return this.carregarDetalhesDaConta(conta);
     });
     await Promise.all(promises);
-    this.isLoading = false
+    this.isLoading = false;
   }
 
   async carregarDetalhesDaConta(conta: Conta) {
