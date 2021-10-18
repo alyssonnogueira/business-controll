@@ -6,7 +6,14 @@ import {TipoContaEnum} from '../model/tipo-conta.enum';
 import {Transacao} from '../model/transacao';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
 import {TipoTransacaoEnum} from '../model/tipo-transacao.enum';
-import {lastValueFrom, map, Observable} from 'rxjs';
+import {
+  combineLatestWith,
+  concatWith,
+  filter, firstValueFrom,
+  lastValueFrom,
+  map,
+  Observable, takeLast
+} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +27,7 @@ export class ContaService {
   }
 
   obterContaPorId(id: number): Observable<Conta> {
+    console.log("obterContaPorId");
     return this.dbService.getByID(this.key, id);
   }
 
@@ -41,7 +49,7 @@ export class ContaService {
   }
 
   salvarConta(conta: Conta): void {
-    this.dbService.add(this.key, conta);
+    this.dbService.add(this.key, conta).subscribe();
   }
 
   atualizarConta(conta: Conta): Observable<Conta> {
@@ -55,33 +63,37 @@ export class ContaService {
   }
 
   async alterarSaldoConta(transacao: Transacao) {
-    const conta = await lastValueFrom(this.obterContaPorId(transacao.conta.id));
+    console.log("ALTERA SALDO");
+    const conta = await firstValueFrom(this.obterContaPorId(transacao.conta.id));
+    console.log(conta);
     if (TipoTransacaoEnum.DESPESA === transacao.tipoTransacao) {
+      console.log(conta);
       conta.saldo -= transacao.valor;
     } else if (TipoTransacaoEnum.RECEITA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
     } else if (TipoTransacaoEnum.TRANSFERENCIA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
-      const contaDestino = await lastValueFrom(this.obterContaPorId((transacao as Transferencia).contaDestino.id));
+      const contaDestino = await firstValueFrom(this.obterContaPorId((transacao as Transferencia).contaDestino.id));
       contaDestino.saldo += transacao.valor;
-      await this.atualizarConta(contaDestino);
+      this.atualizarConta(contaDestino).subscribe();
     }
-    await this.atualizarConta(conta);
+    console.log(conta);
+    this.atualizarConta(conta).subscribe();
   }
 
   async desfazerAlteracao(transacao: Transacao) {
-    const conta = await lastValueFrom(this.obterContaPorId(transacao.conta.id));
+    const conta = await firstValueFrom(this.obterContaPorId(transacao.conta.id));
     if (TipoTransacaoEnum.DESPESA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
     } else if (TipoTransacaoEnum.RECEITA === transacao.tipoTransacao) {
       conta.saldo -= transacao.valor;
     } else if (TipoTransacaoEnum.TRANSFERENCIA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
-      const contaDestino = await lastValueFrom(this.obterContaPorId((transacao as Transferencia).contaDestino.id));
+      const contaDestino = await firstValueFrom(this.obterContaPorId((transacao as Transferencia).contaDestino.id));
       contaDestino.saldo -= transacao.valor;
-      await this.atualizarConta(contaDestino);
+      this.atualizarConta(contaDestino).subscribe();
     }
-    await this.atualizarConta(conta);
+    this.atualizarConta(conta).subscribe();
   }
 
   importarContas(contas: Conta[]) {
@@ -99,15 +111,18 @@ export class ContaService {
       });
   }
 
-  async mockData() {
-    const contas = await lastValueFrom(this.obterTodasContas());
-    if (contas == null || contas.length === 0) {
-      this.dbService.add(this.key, new Conta('Banco Digital', 100,
-        await lastValueFrom(this.responsavelService.obterResponsavelPorId(1)), TipoContaEnum.DEBITO));
-      this.dbService.add(this.key, new Conta('Bancão', 50,
-        await lastValueFrom(this.responsavelService.obterResponsavelPorId(1)), TipoContaEnum.DEBITO));
-      this.dbService.add(this.key, new Conta('Banco Digital', 200,
-        await lastValueFrom(this.responsavelService.obterResponsavelPorId(2)), TipoContaEnum.DEBITO));
-    }
+  mockData(): Observable<any> {
+    const contasObservable = this.obterTodasContas()
+      .pipe(
+        filter((contas: Conta[]) => contas == null || contas.length === 0),
+        combineLatestWith(this.responsavelService.obterResponsavelPorId(1), this.responsavelService.obterResponsavelPorId(2)),
+        map(([_, responsavel1, responsavel2]) => {
+          this.salvarConta(new Conta('Banco Digital', 100, responsavel1, TipoContaEnum.DEBITO));
+          this.salvarConta(new Conta('Bancão', 50, responsavel1, TipoContaEnum.DEBITO));
+          this.salvarConta(new Conta('Banco Digital', 200, responsavel2, TipoContaEnum.DEBITO));
+        })
+      );
+
+    return this.responsavelService.mockData().pipe(concatWith(contasObservable));
   }
 }

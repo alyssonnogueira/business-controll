@@ -12,7 +12,7 @@ import {CategoriaDespesaEnum} from '../model/categoria-despesa.enum';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
 import {Responsavel} from '../model/responsavel';
 import {TipoContaEnum} from '../model/tipo-conta.enum';
-import {lastValueFrom, map, Observable} from 'rxjs';
+import {combineLatestWith, concatWith, filter, lastValueFrom, map, Observable, Subscription, takeLast} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,7 @@ export class TransacaoService {
 
   constructor(private responsavelService: ResponsavelService, private contaService: ContaService,
               private dbService: NgxIndexedDBService) {
-    this.mockData();
+    console.log(this.mockData());
   }
 
   obterTodasTransacoes(tipoTransacoes?: TipoTransacaoEnum[],
@@ -39,14 +39,6 @@ export class TransacaoService {
         .filter(transacao => this.filtroConta(transacao, contas))
       )
     );
-
-    // return this.dbService.getAll(this.key).pipe((transacoes: TransacTraao[]) => {
-    //   return transacoes
-    //     .filter(transacao => this.filtroData(transacao, dataInicial, dataFinal))
-    //     .filter(transacao => this.filtroResponsavel(transacao, responsaveis))
-    //     .filter(transacao => this.filtroTipoTransacao(transacao, tipoTransacoes))
-    //     .filter(transacao => this.filtroConta(transacao, contas));
-    // }).subscribe();
   }
 
   obterTodasDespesas(responsaveis?: Responsavel[],
@@ -91,21 +83,23 @@ export class TransacaoService {
   }
 
   salvarTransacao(transacao: Transacao): void {
-    this.dbService.add(this.key, transacao);
-    this.contaService.alterarSaldoConta(transacao);
+    this.dbService.add(this.key, transacao).subscribe(() => {
+      console.log("altera saldo");
+      this.contaService.alterarSaldoConta(transacao);
+    });
   }
 
   desfazerTransacao(transacao: Transacao): void {
     this.contaService.desfazerAlteracao(transacao);
-    this.dbService.delete(this.key, transacao.id);
+    this.dbService.delete(this.key, transacao.id).subscribe();
   }
 
   async editarTransacao(transacaoDesfeita, novaTransacao): Promise<void> {
     this.desfazerTransacao(transacaoDesfeita);
     await this.contaService.desfazerAlteracao(transacaoDesfeita);
-    await this.dbService.delete(this.key, transacaoDesfeita);
+    await this.dbService.delete(this.key, transacaoDesfeita).subscribe();
     delete novaTransacao.id;
-    await this.dbService.add(this.key, novaTransacao);
+    await this.dbService.add(this.key, novaTransacao).subscribe();
     await this.contaService.alterarSaldoConta(novaTransacao);
   }
 
@@ -161,8 +155,8 @@ export class TransacaoService {
       true;
   }
 
-  importarTransacoes(transacoes: Transacao[]) {
-    this.dbService.clear(this.key).subscribe(
+  importarTransacoes(transacoes: Transacao[]): Subscription {
+    return this.dbService.clear(this.key).subscribe(
       {
         next: () => transacoes.forEach(transacao => {
           transacao.data = new Date(transacao.data);
@@ -178,36 +172,43 @@ export class TransacaoService {
       });
   }
 
-  async mockData() {
-    const transacoes = await lastValueFrom(this.obterTodasTransacoes());
+  mockData() {
+    const transacoesObservable = this.dbService.getAll(this.key)
+      .pipe(
+        // filter((transacoes: Transacao[]) => {
+        //   console.log(transacoes);
+        //   return transacoes == null || transacoes.length === 0;
+        // }),
+        combineLatestWith(this.contaService.obterContaPorId(1), this.contaService.obterContaPorId(2)),
+        map(([_, conta1, conta2]) => {
+          const transacao1 = {
+            data: new Date(),
+            valor: 1.5,
+            descricao: 'teste 1',
+            responsavel: conta1.responsavel,
+            conta: conta1,
+            categoria: 'ALIMENTACAO'
+          };
+          this.salvarTransacao(Despesa.jsonToDespesa(transacao1));
+          console.log(transacao1);
+          const transacao2 = {
+            data: new Date(),
+            valor: 20,
+            descricao: 'teste 2',
+            responsavel: conta2.responsavel,
+            conta: conta2,
+            tipoRenda: 'SALARIO'
+          };
+          this.salvarTransacao(Receita.jsonToReceita(transacao2));
+          console.log(transacao2);
 
-    if (transacoes == null || transacoes.length === 0) {
-      const transacao1 = {
-        data: new Date(),
-        valor: 1.5,
-        descricao: 'teste 1',
-        responsavel: await this.responsavelService.obterResponsavelPorId(1),
-        conta: await this.contaService.obterContaPorId(1),
-        categoria: 'ALIMENTACAO'
-      };
-      this.salvarTransacao(Despesa.jsonToDespesa(transacao1));
+          const transacao3 = new Transferencia(new Date(), 5, 'teste 3', conta1.responsavel, conta1, conta2);
+          this.salvarTransacao(transacao3);
+          console.log(transacao3);
+        })
+      );
 
-      const transacao2 = {
-        data: new Date(),
-        valor: 20,
-        descricao: 'teste 2',
-        responsavel: await this.responsavelService.obterResponsavelPorId(1),
-        conta: await this.contaService.obterContaPorId(1),
-        tipoRenda: 'SALARIO'
-      };
-      this.salvarTransacao(Receita.jsonToReceita(transacao2));
-
-      const transacao3 = new Transferencia(new Date(), 5, 'teste 3',
-        await lastValueFrom(this.responsavelService.obterResponsavelPorId(1)),
-        await lastValueFrom(this.contaService.obterContaPorId(1)),
-        await lastValueFrom(this.contaService.obterContaPorId(2)));
-      this.salvarTransacao(transacao3);
-    }
+    return this.contaService.mockData().pipe(concatWith(transacoesObservable)).subscribe();
   }
 
 }

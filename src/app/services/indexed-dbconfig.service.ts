@@ -2,7 +2,7 @@ import {Directive, Injectable} from '@angular/core';
 import {DBConfig, ObjectStoreMeta} from 'ngx-indexed-db/lib/ngx-indexed-db.meta';
 import { Conta } from '../model/conta';
 
-@Directive()
+// @Directive()
 @Injectable({
   providedIn: 'root'
 })

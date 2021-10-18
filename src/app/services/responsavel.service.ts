@@ -1,7 +1,8 @@
 import {Responsavel} from './../model/responsavel';
 import {Injectable} from '@angular/core';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
-import {first, lastValueFrom, map, mergeMap, Observable, pipe} from 'rxjs';
+import {filter, finalize, first, lastValueFrom, map, mergeMap, Observable, pipe, Subscription, takeLast} from 'rxjs';
+import {Conta} from '../model/conta';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ export class ResponsavelService {
   private key = 'responsavel';
 
   constructor(private dbService: NgxIndexedDBService) {
-    this.mockData();
+    // this.mockData(); //.subscribe();
   }
 
   obterResponsavelPorId(id: number): Observable<Responsavel> {
@@ -27,7 +28,7 @@ export class ResponsavelService {
   }
 
   salvarResponsavel(responsavel: Responsavel) {
-    this.dbService.add(this.key, responsavel);
+    this.dbService.add(this.key, responsavel).subscribe();
   }
 
   atualizarResponsavel(responsavel: Responsavel): Observable<Responsavel> {
@@ -57,11 +58,14 @@ export class ResponsavelService {
       });
   }
 
-  async mockData() {
-    const transacoes = await lastValueFrom(this.obterTodosResponsaveis());
-    if (transacoes == null || transacoes.length === 0) {
-      this.salvarResponsavel(new Responsavel('Joãozinho'));
-      this.salvarResponsavel(new Responsavel('Maria'));
-    }
+  mockData(): Observable<void> {
+    return this.obterTodosResponsaveis()
+      .pipe(
+        filter((responsaveis: Responsavel[]) => responsaveis == null || responsaveis.length === 0),
+        map(() => {
+          this.salvarResponsavel(new Responsavel('Joãozinho'));
+          this.salvarResponsavel(new Responsavel('Maria'));
+        })
+      );
   }
 }

@@ -53,7 +53,7 @@ import {NgxIndexedDBModule} from 'ngx-indexed-db';
 import {IndexedDBConfigService} from './services/indexed-dbconfig.service';
 import { FileUploadModalComponent } from './component/file-upload-modal/file-upload-modal.component';
 import { ChartsModule } from 'ng2-charts';
-import { HomeComponent } from './component//home/home.component';
+import { HomeComponent } from './component/home/home.component';
 import { DoughnutChartComponent } from './component/doughnut-chart/doughnut-chart.component';
 import localePTBRExtra from '@angular/common/locales/extra/pt';
 import localePTBR from '@angular/common/locales/pt';

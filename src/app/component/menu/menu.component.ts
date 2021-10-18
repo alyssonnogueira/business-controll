@@ -30,7 +30,7 @@ export class MenuComponent implements OnInit {
   }
 
   download() {
-    this.fileService.exportDatabase().then(database => {
+    this.fileService.exportDatabase().subscribe(database => {
       const blob = new Blob([database], { type: 'text/json' });
       fileSaver.saveAs(blob, 'BusinessControllV3.json');
     });

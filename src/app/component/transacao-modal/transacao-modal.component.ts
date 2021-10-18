@@ -46,12 +46,15 @@ export class TransacaoModalComponent implements OnInit {
         this.tipoTransacao = 'DESPESA';
         const despesa = this.data as Despesa;
         despesa.categoria = this.categoriaEnum[despesa.categoria];
+        this.categoriaData = this.categoriaEnum[despesa.categoria];
       } else if ('tipoRenda' in this.data) {
         this.tipoTransacao = 'RECEITA';
         const receita = this.data as Receita;
         receita.tipoRenda = this.tipoRendaEnum[receita.tipoRenda];
+        this.tipoRendaData = this.tipoRendaEnum[receita.tipoRenda];
       } else if ('contaDestino' in this.data) {
         this.tipoTransacao = 'TRANSFERENCIA';
+        this.contaDestinoData = (this.data as Transferencia).contaDestino;
       }
       this.obterContas();
     } else {
@@ -65,14 +68,17 @@ export class TransacaoModalComponent implements OnInit {
 
   onSave(): void {
     if (this.isDespesa && this.validarDespesa(this.data as Despesa)) {
+      (this.data as Despesa).categoria = this.categoriaData;
       this.dialogRef.close(Despesa.jsonToDespesa(this.data));
     }
 
     if (this.isReceita && this.validarReceita(this.data as Receita)) {
+      (this.data as Receita).tipoRenda = this.tipoRendaData;
       this.dialogRef.close(Receita.jsonToReceita(this.data));
     }
 
     if (this.isTranferencia && this.validarTransferencia(this.data as Transferencia)) {
+      (this.data as Transferencia).contaDestino = this.contaDestinoData;
       this.dialogRef.close(Transferencia.jsonToTransferencia(this.data));
     }
   }
@@ -103,7 +109,7 @@ export class TransacaoModalComponent implements OnInit {
   }
 
   validarDespesa(transacao: Despesa): boolean {
-    if (this.validarTransacao(transacao) || !transacao.categoria) {
+    if (this.validarTransacao(transacao) || (!transacao.categoria && !this.categoriaData)) {
       this.mostrarMensagemDeErro();
       return false;
     }
@@ -111,14 +117,14 @@ export class TransacaoModalComponent implements OnInit {
   }
 
   validarTransferencia(transacao: Transferencia) {
-    if (this.validarTransacao(transacao) || !transacao.contaDestino) {
+    if (this.validarTransacao(transacao) || (!transacao.contaDestino && !this.contaDestinoData)) {
       this.mostrarMensagemDeErro();
       return false;
     }
     return true;
   }
   validarReceita(transacao: Receita) {
-    if (this.validarTransacao(transacao) || !transacao.tipoRenda) {
+    if (this.validarTransacao(transacao) || (!transacao.tipoRenda && !this.tipoRendaData)) {
       this.mostrarMensagemDeErro();
       return false;
     }
@@ -130,6 +136,7 @@ export class TransacaoModalComponent implements OnInit {
   }
 
   mostrarMensagemDeErro(): void {
+    console.log(this.data);
     this.snackBar.open(this.mensagemValidacao, 'Ok', {
       duration: 3000,
     });
