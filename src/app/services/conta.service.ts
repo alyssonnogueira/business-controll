@@ -27,7 +27,6 @@ export class ContaService {
   }
 
   obterContaPorId(id: number): Observable<Conta> {
-    console.log("obterContaPorId");
     return this.dbService.getByID(this.key, id);
   }
 
@@ -63,11 +62,8 @@ export class ContaService {
   }
 
   async alterarSaldoConta(transacao: Transacao) {
-    console.log("ALTERA SALDO");
     const conta = await firstValueFrom(this.obterContaPorId(transacao.conta.id));
-    console.log(conta);
     if (TipoTransacaoEnum.DESPESA === transacao.tipoTransacao) {
-      console.log(conta);
       conta.saldo -= transacao.valor;
     } else if (TipoTransacaoEnum.RECEITA === transacao.tipoTransacao) {
       conta.saldo += transacao.valor;
@@ -77,7 +73,6 @@ export class ContaService {
       contaDestino.saldo += transacao.valor;
       this.atualizarConta(contaDestino).subscribe();
     }
-    console.log(conta);
     this.atualizarConta(conta).subscribe();
   }
 
@@ -106,12 +101,12 @@ export class ContaService {
         }),
         error: err => console.log('Erro ao importar contas: ' + err),
         complete: () => this.dbService.count(this.key).subscribe(nContas => {
-          console.log(`Improtacao de Contas concluida \n ${nContas} Contas importadas`);
+          console.log(`Importacao de Contas concluida \n ${nContas} Contas importadas`);
         })
       });
   }
 
-  mockData(): Observable<any> {
+  mockData(): Observable<void> {
     const contasObservable = this.obterTodasContas()
       .pipe(
         filter((contas: Conta[]) => contas == null || contas.length === 0),

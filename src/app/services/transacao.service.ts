@@ -23,7 +23,7 @@ export class TransacaoService {
 
   constructor(private responsavelService: ResponsavelService, private contaService: ContaService,
               private dbService: NgxIndexedDBService) {
-    console.log(this.mockData());
+    this.mockData();
   }
 
   obterTodasTransacoes(tipoTransacoes?: TipoTransacaoEnum[],
@@ -84,7 +84,6 @@ export class TransacaoService {
 
   salvarTransacao(transacao: Transacao): void {
     this.dbService.add(this.key, transacao).subscribe(() => {
-      console.log("altera saldo");
       this.contaService.alterarSaldoConta(transacao);
     });
   }
@@ -166,7 +165,7 @@ export class TransacaoService {
         complete: () =>
           this.dbService.count(this.key).subscribe({
             next: nTransacoes => {
-              console.log(`Improtacao de Transacoes concluida \n ${nTransacoes} Transacoes importadas`);
+              console.log(`Importacao de Transacoes concluida \n ${nTransacoes} Transacoes importadas`);
             }
           })
       });
@@ -175,10 +174,9 @@ export class TransacaoService {
   mockData() {
     const transacoesObservable = this.dbService.getAll(this.key)
       .pipe(
-        // filter((transacoes: Transacao[]) => {
-        //   console.log(transacoes);
-        //   return transacoes == null || transacoes.length === 0;
-        // }),
+        filter((transacoes: Transacao[]) => {
+          return transacoes == null || transacoes.length === 0;
+        }),
         combineLatestWith(this.contaService.obterContaPorId(1), this.contaService.obterContaPorId(2)),
         map(([_, conta1, conta2]) => {
           const transacao1 = {
@@ -190,7 +188,6 @@ export class TransacaoService {
             categoria: 'ALIMENTACAO'
           };
           this.salvarTransacao(Despesa.jsonToDespesa(transacao1));
-          console.log(transacao1);
           const transacao2 = {
             data: new Date(),
             valor: 20,
@@ -200,15 +197,13 @@ export class TransacaoService {
             tipoRenda: 'SALARIO'
           };
           this.salvarTransacao(Receita.jsonToReceita(transacao2));
-          console.log(transacao2);
 
           const transacao3 = new Transferencia(new Date(), 5, 'teste 3', conta1.responsavel, conta1, conta2);
           this.salvarTransacao(transacao3);
-          console.log(transacao3);
         })
       );
 
-    return this.contaService.mockData().pipe(concatWith(transacoesObservable)).subscribe();
+    this.contaService.mockData().subscribe(() => transacoesObservable.subscribe());
   }
 
 }

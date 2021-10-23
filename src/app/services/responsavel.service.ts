@@ -53,7 +53,7 @@ export class ResponsavelService {
         }),
         error: err => console.log('Erro ao importar responsaveis: ' + err),
         complete: () => this.dbService.count(this.key).subscribe(nResponsaveis => {
-          console.log(`Improtacao de Responsaveis concluida \n ${nResponsaveis} Responsaveis importadas`);
+          console.log(`Importacao de Responsaveis concluida \n ${nResponsaveis} Responsaveis importadas`);
         })
       });
   }
