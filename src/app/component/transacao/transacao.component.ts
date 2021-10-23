@@ -5,7 +5,9 @@ import {CategoriaDespesaEnum} from 'src/app/model/categoria-despesa.enum';
 import {TipoRendaEnum} from './../../model/tipo-renda.enum';
 import {TransacaoService} from '../../services/transacao.service';
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {MatPaginator, MatSort, MatTableDataSource} from '@angular/material';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import {Transacao} from '../../model/transacao';
 import {TransacaoModalComponent} from '../transacao-modal/transacao-modal.component';
 import {MatDialog} from '@angular/material/dialog';
@@ -48,18 +50,18 @@ export class TransacaoComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.transacaoService.obterTodasTransacoes(null, null, null, this.dataInicial, this.dataFinal).then(transacoes => {
+    this.transacaoService.obterTodasTransacoes(null, null, null, this.dataInicial, this.dataFinal).subscribe(transacoes => {
       this.dataSource = new MatTableDataSource(transacoes);
       this.dataSource.paginator = this.paginator;
       this.dataSource.paginator.pageSize = 10;
       this.dataSource.sort = this.sort;
     });
-    this.responsavelService.obterTodosResponsaveis().then(responsaveis => {
+    this.responsavelService.obterTodosResponsaveis().subscribe(responsaveis => {
       this.responsaveis = responsaveis;
       this.responsaveisFiltrados = responsaveis.slice();
     });
 
-    this.contaService.obterTodasContas().then(contas => {
+    this.contaService.obterTodasContas().subscribe(contas => {
       this.contas = contas;
       this.contasFiltrados = contas.slice();
     });
@@ -159,10 +161,9 @@ export class TransacaoComponent implements OnInit {
   }
 
   atualizarDataSource() {
-    console.log(this.contasFiltrados);
     this.transacaoService.obterTodasTransacoes(
       this.tipoTransacoesFiltradas, this.responsaveisFiltrados, this.contasFiltrados, this.dataInicial, this.dataFinal)
-      .then(transacoes => {
+      .subscribe(transacoes => {
         this.dataSource.data = transacoes;
       });
 

@@ -14,7 +14,7 @@
         <mat-label>Descrição</mat-label>
         <input matInput [(ngModel)]="data.descricao">
     </mat-form-field>
-    <mat-select placeholder="Selecione o Responsavel" [compareWith]="responsavelService.responsaveisSaoIguais" [(ngModel)]="data.responsavel" [(value)]="data.responsavel" (selectionChange)="obterContas($event)"required>
+    <mat-select placeholder="Selecione o Responsavel" [compareWith]="responsavelService.responsaveisSaoIguais" [(ngModel)]="data.responsavel" [(value)]="data.responsavel" (selectionChange)="obterContas()" required>
         <mat-option *ngFor="let responsavel of responsaveis; let idx = index" [value]=responsavel>{{responsavel.nome}}</mat-option>
     </mat-select>
     <mat-select placeholder="Selecione a Conta" [compareWith]="contaService.contasSaoIguais" [(ngModel)]="data.conta" [(value)]="data.conta" required>
@@ -27,13 +27,13 @@
         <mat-radio-button *ngFor="let transacao of keys(tipoTransacaoEnum)" [value]="transacao">{{ tipoTransacaoEnum[transacao] }}</mat-radio-button>
     </mat-radio-group>
     <div class="tipoTransacao">
-        <mat-select *ngIf="isDespesa" placeholder="Selecione o tipo de Despesa" [compareWith]="categoriasSaoIguais" [(ngModel)]="data.categoria" [(value)]="data.categoria">
-            <mat-option *ngFor="let categoria of keys(categoriaEnum)" [value]="categoria">{{categoriaEnum[categoria]}}</mat-option>
+        <mat-select *ngIf="isDespesa" placeholder="Selecione o tipo de Despesa" [compareWith]="categoriasSaoIguais" [(ngModel)]="categoriaData" [(value)]="categoriaData">
+            <mat-option *ngFor="let categoria of keys(categoriaEnum) let idx = index" [value]="categoria">{{categoriaEnum[categoria]}}</mat-option>
         </mat-select>
-        <mat-select *ngIf="isReceita" placeholder="Selecione o tipo de Receita" [compareWith]="receitasSaoIguais" [(ngModel)]="data.tipoRenda" [(value)]="data.tipoRenda">
-            <mat-option *ngFor="let tipoRenda of keys(tipoRendaEnum)" [value]="tipoRenda">{{tipoRendaEnum[tipoRenda]}}</mat-option>
+        <mat-select *ngIf="isReceita" placeholder="Selecione o tipo de Receita" [compareWith]="receitasSaoIguais" [(ngModel)]="tipoRendaData" [(value)]="tipoRendaData">
+            <mat-option *ngFor="let tipoRenda of keys(tipoRendaEnum) let idx = index" [value]="tipoRenda">{{tipoRendaEnum[tipoRenda]}}</mat-option>
         </mat-select>
-        <mat-select *ngIf="isTranferencia" placeholder="Selecione a Conta de Destino" [compareWith]="contaService.contasSaoIguais" [(ngModel)]="data.contaDestino" [(value)]="data.contaDestino">
+        <mat-select *ngIf="isTranferencia" placeholder="Selecione a Conta de Destino" [compareWith]="contaService.contasSaoIguais" [(ngModel)]="contaDestinoData" [(value)]="contaDestinoData">
             <mat-option *ngFor="let contaDestino of contas; let idx = index" [value]=contaDestino>{{contaDestino.nome}}</mat-option>
         </mat-select>
     </div>

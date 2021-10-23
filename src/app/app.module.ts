@@ -10,33 +10,38 @@ import {AppRouterModule} from './router/app-router.module';
 import { MenuComponent } from './component/menu/menu.component';
 import { FormsModule } from '@angular/forms';
 
-import {
-  MatAutocompleteModule,
-  MatButtonModule,
-  MatButtonToggleModule,
-  MatCardModule,
-  MatCheckboxModule,
-  MatChipsModule,
-  MatDatepickerModule,
-  MatDialogModule,
-  MatDividerModule,
-  MatExpansionModule,
-  MatFormFieldModule,
-  MatGridListModule,
-  MatIconModule,
-  MatInputModule,
-  MatListModule,
-  MatMenuModule,
-  MatNativeDateModule,
-  MatPaginatorModule,
-  MatProgressBarModule,
-  MatProgressSpinnerModule,
-  MatRadioModule,
-  MatRippleModule,
-  MatSelectModule,
-  MatSidenavModule, MatSliderModule, MatSlideToggleModule, MatSnackBarModule, MatSortModule,
-  MatStepperModule, MatTableModule, MatTabsModule, MatToolbarModule, MatTooltipModule, MAT_DATE_LOCALE, MatPaginatorIntl
-} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatButtonModule } from '@angular/material/button';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatNativeDateModule, MatRippleModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatListModule } from '@angular/material/list';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatPaginatorModule, MatPaginatorIntl } from '@angular/material/paginator';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTableModule } from '@angular/material/table';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import {ReactiveFormsModule} from '@angular/forms';
 import {CdkTableModule} from '@angular/cdk/table';
 import { TransacaoModalComponent } from './component/transacao-modal/transacao-modal.component';
@@ -48,7 +53,7 @@ import {NgxIndexedDBModule} from 'ngx-indexed-db';
 import {IndexedDBConfigService} from './services/indexed-dbconfig.service';
 import { FileUploadModalComponent } from './component/file-upload-modal/file-upload-modal.component';
 import { ChartsModule } from 'ng2-charts';
-import { HomeComponent } from './component//home/home.component';
+import { HomeComponent } from './component/home/home.component';
 import { DoughnutChartComponent } from './component/doughnut-chart/doughnut-chart.component';
 import localePTBRExtra from '@angular/common/locales/extra/pt';
 import localePTBR from '@angular/common/locales/pt';
@@ -56,6 +61,7 @@ import { registerLocaleData } from '@angular/common';
 import { CurrencyMaskModule } from 'ng2-currency-mask';
 import { NgxCurrencyModule } from 'ngx-currency';
 import { EvolucaoChartComponent } from './component/evolucao-chart/evolucao-chart.component';
+import { SorteioComponent } from './component/sorteio/sorteio.component';
 
 registerLocaleData(localePTBR, 'pt-BR', localePTBRExtra);
 export const customCurrencyMaskConfig = {
@@ -87,6 +93,7 @@ export const customCurrencyMaskConfig = {
     DoughnutChartComponent,
     CurrencyFormatPipe,
     EvolucaoChartComponent,
+    SorteioComponent,
   ],
   entryComponents: [
     TransacaoModalComponent,

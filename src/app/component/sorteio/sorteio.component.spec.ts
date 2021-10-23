@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { ResponsavelModalComponent } from './responsavel-modal.component';
+import { SorteioComponent } from './sorteio.component';
 
-describe('ResponsavelModalComponent', () => {
-  let component: ResponsavelModalComponent;
-  let fixture: ComponentFixture<ResponsavelModalComponent>;
+describe('SorteioComponent', () => {
+  let component: SorteioComponent;
+  let fixture: ComponentFixture<SorteioComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ ResponsavelModalComponent ]
+      declarations: [ SorteioComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ResponsavelModalComponent);
+    fixture = TestBed.createComponent(SorteioComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

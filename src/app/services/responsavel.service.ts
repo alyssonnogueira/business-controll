@@ -1,7 +1,8 @@
 import {Responsavel} from './../model/responsavel';
 import {Injectable} from '@angular/core';
 import {NgxIndexedDBService} from 'ngx-indexed-db';
-import {Observable, pipe} from 'rxjs';
+import {filter, finalize, first, lastValueFrom, map, mergeMap, Observable, pipe, Subscription, takeLast} from 'rxjs';
+import {Conta} from '../model/conta';
 
 @Injectable({
   providedIn: 'root'
@@ -11,15 +12,15 @@ export class ResponsavelService {
   private key = 'responsavel';
 
   constructor(private dbService: NgxIndexedDBService) {
-    this.mockData();
+    // this.mockData(); //.subscribe();
   }
 
-  obterResponsavelPorId(id: number): Promise<Responsavel> {
+  obterResponsavelPorId(id: number): Observable<Responsavel> {
     return this.dbService.getByID(this.key, id);
   }
 
-  obterTodosResponsaveis(): Promise<Responsavel[]> {
-    return this.dbService.getAll(this.key).then(this.filtrarResponsaveisDesativadas);
+  obterTodosResponsaveis(): Observable<Responsavel[]> {
+    return this.dbService.getAll(this.key).pipe(map(this.filtrarResponsaveisDesativadas));
   }
 
   filtrarResponsaveisDesativadas(contas: Responsavel[]): Responsavel[] {
@@ -27,14 +28,15 @@ export class ResponsavelService {
   }
 
   salvarResponsavel(responsavel: Responsavel) {
-    this.dbService.add(this.key, responsavel);
+    this.dbService.add(this.key, responsavel).subscribe();
   }
 
-  atualizarResponsavel(responsavel: Responsavel): Promise<Responsavel> {
-    return this.dbService.update(this.key, responsavel);
+  atualizarResponsavel(responsavel: Responsavel): Observable<Responsavel> {
+    return this.dbService.update(this.key, responsavel)
+      .pipe(map((responsaveis: Responsavel[]) => responsaveis[0]));
   }
 
-  desativarResponsavel(responsavel: Responsavel): Promise<Responsavel> {
+  desativarResponsavel(responsavel: Responsavel): Observable<Responsavel> {
     responsavel.dataExclusao = new Date();
     return this.atualizarResponsavel(responsavel);
   }
@@ -44,24 +46,26 @@ export class ResponsavelService {
   }
 
   importarResponsaveis(responsaveis: Responsavel[]) {
-    this.dbService.clear(this.key).then(() => {
-      responsaveis.forEach(responsavel => {
-        this.salvarResponsavel(responsavel);
-      })
-    }).catch(err => {
-      console.log("Erro ao importar responsaveis: " + err);
-    }).finally(() => {
-      this.dbService.count(this.key).then(nResponsaveis => {
-        console.info(`Improtacao de Responsaveis concluida \n ${nResponsaveis} Responsaveis importadas`);
+    this.dbService.clear(this.key).subscribe(
+      {
+        next: () => responsaveis.forEach(responsavel => {
+          this.salvarResponsavel(responsavel);
+        }),
+        error: err => console.log('Erro ao importar responsaveis: ' + err),
+        complete: () => this.dbService.count(this.key).subscribe(nResponsaveis => {
+          console.log(`Importacao de Responsaveis concluida \n ${nResponsaveis} Responsaveis importadas`);
+        })
       });
-    });
   }
 
-  async mockData() {
-    const transacoes = await this.obterTodosResponsaveis();
-    if (transacoes == null || transacoes.length === 0) {
-      this.salvarResponsavel(new Responsavel('Joãozinho'));
-      this.salvarResponsavel(new Responsavel('Maria'));
-    }
+  mockData(): Observable<void> {
+    return this.obterTodosResponsaveis()
+      .pipe(
+        filter((responsaveis: Responsavel[]) => responsaveis == null || responsaveis.length === 0),
+        map(() => {
+          this.salvarResponsavel(new Responsavel('Joãozinho'));
+          this.salvarResponsavel(new Responsavel('Maria'));
+        })
+      );
   }
 }
