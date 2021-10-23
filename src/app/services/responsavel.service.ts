@@ -32,7 +32,7 @@ export class ResponsavelService {
   }
 
   atualizarResponsavel(responsavel: Responsavel): Observable<Responsavel> {
-    return this.dbService.update(this.key, responsavel, responsavel.id)
+    return this.dbService.update(this.key, responsavel)
       .pipe(map((responsaveis: Responsavel[]) => responsaveis[0]));
   }
 

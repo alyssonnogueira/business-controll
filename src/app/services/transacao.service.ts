@@ -90,7 +90,10 @@ export class TransacaoService {
 
   desfazerTransacao(transacao: Transacao): void {
     this.contaService.desfazerAlteracao(transacao);
-    this.dbService.delete(this.key, transacao.id).subscribe();
+    this.dbService.delete<Transacao>(this.key, transacao.id)
+      .subscribe({
+        error: err => console.log('Erro ao deletar transacao: ' + transacao + ', erro:' + err)
+      });
   }
 
   async editarTransacao(transacaoDesfeita, novaTransacao): Promise<void> {

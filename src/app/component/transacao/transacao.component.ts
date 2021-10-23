@@ -161,7 +161,6 @@ export class TransacaoComponent implements OnInit {
   }
 
   atualizarDataSource() {
-    console.log(this.contasFiltrados);
     this.transacaoService.obterTodasTransacoes(
       this.tipoTransacoesFiltradas, this.responsaveisFiltrados, this.contasFiltrados, this.dataInicial, this.dataFinal)
       .subscribe(transacoes => {
